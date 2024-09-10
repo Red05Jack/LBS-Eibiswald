@@ -4,6 +4,7 @@ public class Employee extends Person {
     public Employee(String lastName, String firstName, String supervisorID) {
         super(lastName, firstName);
         this.m_supervisorID = supervisorID;
+        this.m_salary = 0;
     }
 
     // Public Member Methods
