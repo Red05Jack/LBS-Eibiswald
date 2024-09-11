@@ -1,4 +1,6 @@
-public class BankAccount {
+import java.util.ArrayList;
+
+public abstract  class BankAccount {
     public BankAccount(
             String accountOwner,
             String BIC,
@@ -14,6 +16,8 @@ public class BankAccount {
        this.m_accountBalance = 0.0;
 
        this.m_accountType = accountType;
+
+       this.m_accountHistory = new ArrayList<String>();
     }
 
     // Getter & Setter
@@ -54,16 +58,27 @@ public class BankAccount {
     }
 
     // Public Member Methods
-    void ChangeBalance(double balance) {
-        this.m_accountBalance += balance;
+    public StringBuilder GetHistory() {
+        StringBuilder history = new StringBuilder();
+
+        for (String e : m_accountHistory) {
+            history.append(e).append("\n");
+        }
+
+        return history;
     }
 
+    public abstract Boolean Deposit(double amount);
+    public abstract Boolean Withdraw(double amount);
+
     // Private Member Variables
-    private String m_accountOwner;
-    private String m_BIC;
-    private String m_IBAN;
-    private double m_overdraftLimit;
-    private double m_accountMaintenanceFees;
-    private double m_accountBalance;
-    private String m_accountType;
+    protected String m_accountOwner;
+    protected String m_BIC;
+    protected String m_IBAN;
+    protected double m_overdraftLimit;
+    protected double m_accountMaintenanceFees;
+    protected double m_accountBalance;
+    protected String m_accountType;
+
+    protected ArrayList<String> m_accountHistory;
 }
