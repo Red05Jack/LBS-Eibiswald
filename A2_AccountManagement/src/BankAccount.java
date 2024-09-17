@@ -1,6 +1,6 @@
 import java.util.ArrayList;
 
-public abstract  class BankAccount {
+public abstract class BankAccount {
     public BankAccount(
             String accountOwner,
             String BIC,
