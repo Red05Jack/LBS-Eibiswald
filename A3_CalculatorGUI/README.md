@@ -3,12 +3,6 @@
 Author: Wurzrainer Jakob <br>
 LBS Eibiswald | 2aAPC
 
-## Installation
-
-```cmd
-git checkout origin/2aAPC
-```
-
 <p align="right"><a href="#readme-top">back to top</a></p>
 
 ## Use
