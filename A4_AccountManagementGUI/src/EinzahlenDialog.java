@@ -1,3 +1,4 @@
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -28,5 +29,9 @@ public class EinzahlenDialog extends JDialog {
             }
         });
     }
-}
 
+    // Getter for betragField
+    public JTextField getBetragField() {
+        return betragField;
+    }
+}

@@ -1,3 +1,4 @@
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -33,5 +34,15 @@ public class UeberweisenDialog extends JDialog {
                 dispose();
             }
         });
+    }
+
+    // Getter for zielKontoField
+    public JTextField getZielKontoField() {
+        return zielKontoField;
+    }
+
+    // Getter for betragField
+    public JTextField getBetragField() {
+        return betragField;
     }
 }

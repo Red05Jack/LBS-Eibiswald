@@ -1,3 +1,4 @@
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -8,7 +9,7 @@ public class AuszahlenDialog extends JDialog {
     private JButton okButton;
 
     public AuszahlenDialog(JFrame parent) {
-        super(parent, "Einzahlen", true);
+        super(parent, "Auszahlen", true);
         setLayout(new GridLayout(2, 2));
         setSize(300, 100);
 
@@ -23,10 +24,14 @@ public class AuszahlenDialog extends JDialog {
             @Override
             public void actionPerformed(ActionEvent e) {
                 String betrag = betragField.getText();
-                JOptionPane.showMessageDialog(parent, betrag + " € eingezahlt");
+                JOptionPane.showMessageDialog(parent, betrag + " € ausgezahlt");
                 dispose();
             }
         });
     }
-}
 
+    // Getter for betragField
+    public JTextField getBetragField() {
+        return betragField;
+    }
+}
