@@ -57,6 +57,22 @@ public class BankForm extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 KontoErstellenDialog erstellenDialog = new KontoErstellenDialog(BankForm.this);
                 erstellenDialog.setVisible(true);
+
+                // Get the newly created account details
+                erstellenDialog.addWindowListener(new java.awt.event.WindowAdapter() {
+                    @Override
+                    public void windowClosed(java.awt.event.WindowEvent windowEvent) {
+                        String neuerInhaber = erstellenDialog.getNameField().getText();
+                        String neueIabn = erstellenDialog.getIabnField().getText();
+
+                        if (!neuerInhaber.isEmpty() && !neueIabn.isEmpty()) {
+                            // Add new account to the list
+                            Konto neuesKonto = new Konto(neuerInhaber, neueIabn, 0.0);
+                            konten.add(neuesKonto);
+                            setAktuellesKonto(neuesKonto); // Set the newly created account as the current account
+                        }
+                    }
+                });
             }
         });
 

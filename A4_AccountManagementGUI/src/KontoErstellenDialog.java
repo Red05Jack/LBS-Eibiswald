@@ -1,3 +1,4 @@
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -17,7 +18,7 @@ public class KontoErstellenDialog extends JDialog {
         nameField = new JTextField();
         add(nameField);
 
-        add(new JLabel("IABN:"));
+        add(new JLabel("IBAN:"));
         iabnField = new JTextField();
         add(iabnField);
 
@@ -33,5 +34,15 @@ public class KontoErstellenDialog extends JDialog {
                 dispose();
             }
         });
+    }
+
+    // Getter for nameField
+    public JTextField getNameField() {
+        return nameField;
+    }
+
+    // Getter for iabnField
+    public JTextField getIabnField() {
+        return iabnField;
     }
 }
