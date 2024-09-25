@@ -25,16 +25,9 @@ public class BankForm extends JFrame {
 
     // Constructor for the form
     public BankForm() {
-        setContentPane(mainPanel);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        pack();
-        setVisible(true);
-
         // Beispielkonten hinzufügen
         konten = new ArrayList<>();
-        konten.add(new Konto("Max Mustermann", "DE1234567890", 1000.00));
-        konten.add(new Konto("Maria Müller", "DE0987654321", 2000.00));
-        konten.add(new Konto("John Doe", "DE1122334455", 500.00));
+        konten.add(new Konto("Max Mustermann", "0", 0.0));
 
         // Standardmäßig das erste Konto anzeigen
         aktuellesKonto = konten.get(0);
@@ -144,10 +137,11 @@ public class BankForm extends JFrame {
     }
 
     public static void main(String[] args) {
-        JFrame frame = new JFrame("BankForm");
+        JFrame frame = new JFrame("Bank Management System");
+        frame.setSize(600, 420);
+        frame.setResizable(false);
         frame.setContentPane(new BankForm().mainPanel);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.pack();
         frame.setVisible(true);
     }
 
