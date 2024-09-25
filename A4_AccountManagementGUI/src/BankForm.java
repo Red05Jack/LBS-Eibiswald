@@ -25,7 +25,6 @@ public class BankForm extends JFrame {
 
     // Constructor for the form
     public BankForm() {
-        setTitle("Bank Management System");
         setContentPane(mainPanel);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         pack();
