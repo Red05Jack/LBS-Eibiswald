@@ -26,14 +26,10 @@ public class FractionCalculatorGlassDesign extends JFrame {
 
         // Main panel with rounded edges and transparency (glass-like)
         JPanel mainPanel = new RoundedPanel(30, new Color(255, 255, 255, 200));
-        mainPanel.setLayout(new GridBagLayout());
+        mainPanel.setLayout(new BorderLayout());
         mainPanel.setOpaque(false); // Transparency for the glass effect
 
-        // GridBagLayout for structured layout
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(10, 10, 10, 10);
-
-        // Create the close and minimize buttons and add them to the main panel
+        // Create the close and minimize buttons and add them to the top-right corner
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 5, 5));
         buttonPanel.setOpaque(false);
 
@@ -51,12 +47,16 @@ public class FractionCalculatorGlassDesign extends JFrame {
         buttonPanel.add(minimizeButton);
         buttonPanel.add(closeButton);
 
-        // Add button panel to the main panel at the top
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        gbc.gridwidth = 3;
-        gbc.anchor = GridBagConstraints.NORTHEAST;
-        mainPanel.add(buttonPanel, gbc);
+        // Add button panel to the top of the main panel
+        mainPanel.add(buttonPanel, BorderLayout.NORTH);
+
+        // Create input fields and layout them in the center of the main panel
+        JPanel centerPanel = new JPanel(new GridBagLayout());
+        centerPanel.setOpaque(false);
+
+        // GridBagLayout for structured layout
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(10, 10, 10, 10);
 
         // Initialize input fields with custom UI
         numerator1 = createCustomTextField();
@@ -78,27 +78,29 @@ public class FractionCalculatorGlassDesign extends JFrame {
         styleButton(calculateButton);
         calculateButton.addActionListener(new CalculateActionListener());
 
-        // Layout the components
+        // Layout the components in the center panel
         gbc.gridx = 0;
-        gbc.gridy = 1;
+        gbc.gridy = 0;
         gbc.gridwidth = 3;
-        gbc.anchor = GridBagConstraints.CENTER;
-        mainPanel.add(fraction1Panel, gbc);
+        centerPanel.add(fraction1Panel, gbc);
+
+        gbc.gridy = 1;
+        centerPanel.add(new JLabel("+"), gbc);
 
         gbc.gridy = 2;
-        mainPanel.add(new JLabel("+"), gbc);
+        centerPanel.add(fraction2Panel, gbc);
 
         gbc.gridy = 3;
-        mainPanel.add(fraction2Panel, gbc);
+        centerPanel.add(new JLabel("="), gbc);
 
         gbc.gridy = 4;
-        mainPanel.add(new JLabel("="), gbc);
+        centerPanel.add(resultLabel, gbc);
 
         gbc.gridy = 5;
-        mainPanel.add(resultLabel, gbc);
+        centerPanel.add(calculateButton, gbc);
 
-        gbc.gridy = 6;
-        mainPanel.add(calculateButton, gbc);
+        // Add the center panel to the main panel
+        mainPanel.add(centerPanel, BorderLayout.CENTER);
 
         // Add the main panel to the frame
         add(mainPanel);
@@ -172,7 +174,7 @@ public class FractionCalculatorGlassDesign extends JFrame {
         button.setForeground(Color.BLACK);
         button.setBorder(BorderFactory.createEmptyBorder(15, 20, 15, 20));
         button.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        button.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
+        button.setBorder(BorderFactory.createEmptyBorder());
         button.setOpaque(true); // Ensure the button is not transparent
     }
 
@@ -182,7 +184,7 @@ public class FractionCalculatorGlassDesign extends JFrame {
         button.setFocusPainted(false);
         button.setBackground(Color.WHITE);
         button.setForeground(Color.BLACK);
-        button.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
+        button.setBorder(BorderFactory.createEmptyBorder());
         button.setCursor(new Cursor(Cursor.HAND_CURSOR));
         button.setPreferredSize(new Dimension(40, 30));
         button.setOpaque(true);
