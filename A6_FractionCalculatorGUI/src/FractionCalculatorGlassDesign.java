@@ -2,12 +2,15 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class FractionCalculatorGlassDesign extends JFrame {
 
     // Fields for the fractions
     private JTextField numerator1, denominator1, numerator2, denominator2;
     private JLabel resultLabel;
+    private Point initialClick;
 
     public FractionCalculatorGlassDesign() {
         // Set the title of the window
@@ -15,15 +18,24 @@ public class FractionCalculatorGlassDesign extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(400, 600);
         setUndecorated(true); // Remove the title bar
+        setResizable(false); // Disable resizing
         setLocationRelativeTo(null); // Center the window
 
         // Set background color to #e09c87
         getContentPane().setBackground(new Color(0xE09C87));
 
-        // Create a custom panel for the close and minimize buttons
-        JPanel controlPanel = new JPanel();
-        controlPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 5, 5));
-        controlPanel.setOpaque(false);
+        // Main panel with rounded edges and transparency (glass-like)
+        JPanel mainPanel = new RoundedPanel(30, new Color(255, 255, 255, 200));
+        mainPanel.setLayout(new GridBagLayout());
+        mainPanel.setOpaque(false); // Transparency for the glass effect
+
+        // GridBagLayout for structured layout
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(10, 10, 10, 10);
+
+        // Create the close and minimize buttons and add them to the main panel
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 5, 5));
+        buttonPanel.setOpaque(false);
 
         // Create the close button
         JButton closeButton = new JButton("X");
@@ -36,17 +48,15 @@ public class FractionCalculatorGlassDesign extends JFrame {
         minimizeButton.addActionListener(e -> setState(JFrame.ICONIFIED)); // Minimize the window
 
         // Add buttons to the control panel
-        controlPanel.add(minimizeButton);
-        controlPanel.add(closeButton);
+        buttonPanel.add(minimizeButton);
+        buttonPanel.add(closeButton);
 
-        // Main panel with rounded edges and transparency (glass-like)
-        JPanel mainPanel = new RoundedPanel(30, new Color(255, 255, 255, 200));
-        mainPanel.setLayout(new GridBagLayout());
-        mainPanel.setOpaque(false); // Transparency for the glass effect
-
-        // GridBagLayout for structured layout
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(10, 10, 10, 10);
+        // Add button panel to the main panel at the top
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.gridwidth = 3;
+        gbc.anchor = GridBagConstraints.NORTHEAST;
+        mainPanel.add(buttonPanel, gbc);
 
         // Initialize input fields with custom UI
         numerator1 = createCustomTextField();
@@ -70,36 +80,63 @@ public class FractionCalculatorGlassDesign extends JFrame {
 
         // Layout the components
         gbc.gridx = 0;
-        gbc.gridy = 0;
+        gbc.gridy = 1;
         gbc.gridwidth = 3;
+        gbc.anchor = GridBagConstraints.CENTER;
         mainPanel.add(fraction1Panel, gbc);
 
-        gbc.gridy = 1;
+        gbc.gridy = 2;
         mainPanel.add(new JLabel("+"), gbc);
 
-        gbc.gridy = 2;
+        gbc.gridy = 3;
         mainPanel.add(fraction2Panel, gbc);
 
-        gbc.gridy = 3;
+        gbc.gridy = 4;
         mainPanel.add(new JLabel("="), gbc);
 
-        gbc.gridy = 4;
+        gbc.gridy = 5;
         mainPanel.add(resultLabel, gbc);
 
-        gbc.gridy = 5;
+        gbc.gridy = 6;
         mainPanel.add(calculateButton, gbc);
 
-        // Create a container panel to hold the control panel and main panel
-        JPanel container = new JPanel(new BorderLayout());
-        container.setOpaque(false);
-        container.add(controlPanel, BorderLayout.NORTH);
-        container.add(mainPanel, BorderLayout.CENTER);
+        // Add the main panel to the frame
+        add(mainPanel);
 
-        // Add the container panel to the frame
-        add(container);
+        // Enable dragging the window
+        enableWindowDragging();
 
         // Make the window visible
         setVisible(true);
+    }
+
+    // Method to enable window dragging
+    private void enableWindowDragging() {
+        addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                initialClick = e.getPoint();
+                getComponentAt(initialClick);
+            }
+        });
+
+        addMouseMotionListener(new MouseAdapter() {
+            @Override
+            public void mouseDragged(MouseEvent e) {
+                // Get location of the window
+                int thisX = getLocation().x;
+                int thisY = getLocation().y;
+
+                // Determine how much the mouse moved
+                int xMoved = e.getX() - initialClick.x;
+                int yMoved = e.getY() - initialClick.y;
+
+                // Move the window to the new location
+                int newX = thisX + xMoved;
+                int newY = thisY + yMoved;
+                setLocation(newX, newY);
+            }
+        });
     }
 
     // Method to create custom text fields
