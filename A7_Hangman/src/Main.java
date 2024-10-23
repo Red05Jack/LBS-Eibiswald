@@ -4,8 +4,12 @@ public class Main {
 
         System.out.println(hangmanGame.getRemainingAttempts());
 
-        System.out.println(hangmanGame.guessLetter('e'));
-        System.out.println(hangmanGame.guessLetter('x'));
+        System.out.println(hangmanGame.guessLetterOrWord(""));
+
+        System.out.println(hangmanGame.getRemainingAttempts());
+
+        System.out.println(hangmanGame.guessLetterOrWord("e"));
+        System.out.println(hangmanGame.guessLetterOrWord("x"));
 
         System.out.println(hangmanGame.getCurrentWordState());
 
@@ -13,6 +17,10 @@ public class Main {
         System.out.println(hangmanGame.isGameOver());
         System.out.println(hangmanGame.getRemainingAttempts());
         System.out.println(hangmanGame.getWordToGuess());
+
+
+        System.out.println(hangmanGame.isGameWon());
+        System.out.println(hangmanGame.guessLetterOrWord("elephant"));
 
 
     }

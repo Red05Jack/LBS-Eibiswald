@@ -17,23 +17,49 @@ public class Hangman {
     }
 
     // Methode um zu raten und zu prüfen, ob der Buchstabe im Wort ist
-    public boolean guessLetter(char letter) {
-        letter = Character.toLowerCase(letter);
+    public boolean guessLetterOrWord(String guess) {
+        guess = guess.toLowerCase();
 
-        if (guessedLetters.contains(letter)) {
-            System.out.println("Dieser Buchstabe wurde bereits geraten.");
-            return false;
+        // Wenn die Länge des Strings 1 ist, wird es als Buchstabe behandelt
+        if (guess.length() == 1) {
+            char letter = guess.charAt(0);
+
+            if (guessedLetters.contains(letter)) {
+                System.out.println("Dieser Buchstabe wurde bereits geraten.");
+                return false;
+            }
+
+            guessedLetters.add(letter);
+
+            if (wordToGuess.indexOf(letter) >= 0) {
+                correctLetters.add(letter);
+                return true;
+            } else {
+                remainingAttempts--;
+                return false;
+            }
         }
-
-        guessedLetters.add(letter);
-
-        if (wordToGuess.indexOf(letter) >= 0) {
-            correctLetters.add(letter);
-            return true;
-        } else {
-            remainingAttempts--;
-            return false;
+        // Wenn die Länge des Strings größer als 1 ist, wird es als Wort behandelt
+        else {
+            if (guess.equals(wordToGuess)) {
+                // Der Spieler hat das richtige Wort geraten
+                correctLetters.addAll(lettersInWord());
+                return true;
+            } else {
+                // Der Spieler hat das falsche Wort geraten
+                remainingAttempts--;
+                return false;
+            }
         }
+    }
+
+    // Hilfsmethode, um alle Buchstaben des gesuchten Wortes als Set zurückzugeben
+    private Set<Character> lettersInWord() {
+        Set<Character> letters = new HashSet<>();
+        for (char letter : wordToGuess.toCharArray()) {
+            letters.add(letter);
+        }
+        return letters;
     }
 
 
