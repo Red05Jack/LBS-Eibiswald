@@ -87,11 +87,16 @@ public class HangmanGUI extends JFrame {
         wordLabel.setFont(new Font("Arial", Font.BOLD, 24));
         wordLabel.setHorizontalAlignment(SwingConstants.CENTER);
 
-        // Statuslabel für das Spielende (über die gesamte Breite)
+        // Statuspanel für das Spielende (enthält Statuslabel und Neustartbutton)
+        JPanel statusPanel = new JPanel();
+        statusPanel.setLayout(new BorderLayout());
+
+        // Statuslabel (Anzeige des Status)
         statusLabel = new JLabel(" ");
         statusLabel.setFont(new Font("Arial", Font.BOLD, 18));
         statusLabel.setHorizontalAlignment(SwingConstants.CENTER);
         statusLabel.setForeground(Color.RED);
+        statusPanel.add(statusLabel, BorderLayout.CENTER);
 
         // Neustart-Button hinzufügen, standardmäßig deaktiviert
         restartButton = new JButton("Neustarten");
@@ -102,11 +107,11 @@ public class HangmanGUI extends JFrame {
                 resetGame();
             }
         });
+        statusPanel.add(restartButton, BorderLayout.EAST);
 
-        // Füge SplitPane, Statuslabel, Neustartbutton und das Wortpanel zur Hauptansicht hinzu
+        // Füge SplitPane, Statuspanel und das Wortpanel zur Hauptansicht hinzu
         add(splitPane, BorderLayout.CENTER);
-        add(statusLabel, BorderLayout.NORTH);
-        add(restartButton, BorderLayout.SOUTH);
+        add(statusPanel, BorderLayout.NORTH);
         add(wordLabel, BorderLayout.SOUTH);
 
         // GUI sichtbar machen
@@ -161,10 +166,8 @@ public class HangmanGUI extends JFrame {
 
     // Methode zum Zurücksetzen des Spiels
     private void resetGame() {
-        // Setze das Spiel zurück, aber nur, wenn der Neustart-Button gedrückt wurde
-        String[] wordList = {"hangman", "java", "computer", "spiel", "entwicklung"};
-        game = new Hangman(wordList[(int)(Math.random() * wordList.length)], 6);
-        wordLabel.setText("Wort: " + game.getCurrentWordState());
+        game.restartGame();  // Nutze die neue Methode in der Hangman-Klasse
+        wordLabel.setText(formatWordForDisplay(game.getCurrentWordState()));
         remainingAttemptsLabel.setText("Verbleibende Versuche: " + game.getRemainingAttempts());
         guessedLettersArea.setText("");
         statusLabel.setText("");  // Lösche Status-Nachricht nach dem Zurücksetzen
@@ -189,5 +192,14 @@ public class HangmanGUI extends JFrame {
 
         // Repaint das Panel, damit das Bild neu gezeichnet wird
         imagePanel.repaint();
+    }
+
+    // Methode zur Formatierung des Wortes mit Leerzeichen zwischen den Zeichen
+    private String formatWordForDisplay(String word) {
+        StringBuilder formattedWord = new StringBuilder();
+        for (char c : word.toCharArray()) {
+            formattedWord.append(c).append(" ");  // Füge ein Leerzeichen nach jedem Zeichen hinzu
+        }
+        return formattedWord.toString().trim();  // Entferne das letzte Leerzeichen
     }
 }

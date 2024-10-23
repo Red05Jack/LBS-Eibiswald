@@ -18,11 +18,8 @@ public class Main {
             return;
         }
 
-        // Wähle ein zufälliges Wort aus der Liste
-        String randomWord = wordList.get((int) (Math.random() * wordList.size()));
-
         // Erstelle das Hangman-Spiel mit dem zufälligen Wort und 11 Versuchen
-        Hangman game = new Hangman(randomWord, 11);
+        Hangman game = new Hangman(wordList);
         new HangmanGUI(game);
     }
 

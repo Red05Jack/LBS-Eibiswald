@@ -1,6 +1,7 @@
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
+import java.util.Random;
 
 public class Hangman {
     private String wordToGuess;       // Das gesuchte Wort
@@ -9,10 +10,18 @@ public class Hangman {
     private Set<Character> guessedLetters; // Bereits geratene Buchstaben
     private Set<Character> correctLetters; // Korrekt geratene Buchstaben
     private Set<String> guessedWords; // Bereits geratene Wörter
+    private List<String> wordList;    // Liste der verfügbaren Wörter für das Spiel
 
-    public Hangman(String wordToGuess, int maxAttempts) {
-        this.wordToGuess = wordToGuess.toLowerCase();
-        this.maxAttempts = maxAttempts;
+    public Hangman(List<String> wordList) {
+        this.wordList = wordList;
+        restartGame();  // Starte das Spiel mit einem zufälligen Wort und 11 Versuchen
+    }
+
+    // Methode um das Spiel zurückzusetzen (Neustart)
+    public void restartGame() {
+        Random random = new Random();
+        this.wordToGuess = wordList.get(random.nextInt(wordList.size())).toLowerCase();
+        this.maxAttempts = 11;  // Hardcoded maximale Versuche
         this.remainingAttempts = maxAttempts;
         this.guessedLetters = new HashSet<>();
         this.correctLetters = new HashSet<>();
@@ -92,9 +101,10 @@ public class Hangman {
             } else {
                 currentState.append('_');
             }
+            currentState.append(' ');  // Füge Leerzeichen für bessere Lesbarkeit hinzu
         }
 
-        return currentState.toString();
+        return currentState.toString().trim();  // Entferne das letzte Leerzeichen
     }
 
     // Methode um zu prüfen, ob das Spiel gewonnen wurde
@@ -122,16 +132,16 @@ public class Hangman {
         return wordToGuess;
     }
 
-    // Neue Methode um alle geratenen Buchstaben und Wörter zurückzugeben
+    // Methode um alle geratenen Buchstaben und Wörter als String zurückzugeben
     public String getAllGuessedStrings() {
-        // Konvertiert die geratenen Buchstaben zu Strings und sammelt sie in eine Liste
-        String guessedLettersString = guessedLetters.stream()
-                .map(String::valueOf)
-                .collect(Collectors.joining(", "));
-
-        // Konvertiert die geratenen Wörter in eine Liste
-        String guessedWordsString = String.join(", ", guessedWords);
-
-        return "Geratene Buchstaben: " + guessedLettersString + "\nGeratene Wörter: " + guessedWordsString;
+        StringBuilder guessed = new StringBuilder("Geratene Buchstaben: ");
+        for (char letter : guessedLetters) {
+            guessed.append(letter).append(' ');
+        }
+        guessed.append("\nGeratene Wörter: ");
+        for (String word : guessedWords) {
+            guessed.append(word).append(' ');
+        }
+        return guessed.toString();
     }
 }
