@@ -18,6 +18,12 @@ public class Hangman {
 
     // Methode um zu raten und zu prüfen, ob der Buchstabe im Wort ist
     public boolean guessLetterOrWord(String guess) {
+        // Überprüfen, ob der String leer ist
+        if (guess == null || guess.isEmpty()) {
+            System.out.println("Eingabe ist leer. Bitte einen Buchstaben oder ein Wort eingeben.");
+            return false;
+        }
+
         guess = guess.toLowerCase();
 
         // Wenn die Länge des Strings 1 ist, wird es als Buchstabe behandelt

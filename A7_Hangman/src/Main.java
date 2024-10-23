@@ -4,12 +4,11 @@ public class Main {
 
         System.out.println(hangmanGame.getRemainingAttempts());
 
-        System.out.println(hangmanGame.guessLetterOrWord(""));
+        System.out.println(hangmanGame.guessLetterOrWord("xx"));
+        System.out.println(hangmanGame.guessLetterOrWord("xx"));
 
         System.out.println(hangmanGame.getRemainingAttempts());
 
-        System.out.println(hangmanGame.guessLetterOrWord("e"));
-        System.out.println(hangmanGame.guessLetterOrWord("x"));
 
         System.out.println(hangmanGame.getCurrentWordState());
 
