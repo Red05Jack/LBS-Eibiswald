@@ -1,5 +1,6 @@
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class Hangman {
     private String wordToGuess;       // Das gesuchte Wort
@@ -119,5 +120,18 @@ public class Hangman {
     // Methode um das gesuchte Wort zurückzugeben
     public String getWordToGuess() {
         return wordToGuess;
+    }
+
+    // Neue Methode um alle geratenen Buchstaben und Wörter zurückzugeben
+    public String getAllGuessedStrings() {
+        // Konvertiert die geratenen Buchstaben zu Strings und sammelt sie in eine Liste
+        String guessedLettersString = guessedLetters.stream()
+                .map(String::valueOf)
+                .collect(Collectors.joining(", "));
+
+        // Konvertiert die geratenen Wörter in eine Liste
+        String guessedWordsString = String.join(", ", guessedWords);
+
+        return "Geratene Buchstaben: " + guessedLettersString + "\nGeratene Wörter: " + guessedWordsString;
     }
 }
