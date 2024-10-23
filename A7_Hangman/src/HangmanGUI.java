@@ -56,6 +56,7 @@ public class HangmanGUI extends JFrame {
         // Eingabefeld und Rate-Button (einzeilig)
         JPanel inputFieldPanel = new JPanel();
         guessField = new JTextField(10);
+        guessField.addActionListener(new GuessButtonListener());
         guessButton = new JButton("Raten");
         guessButton.addActionListener(new GuessButtonListener());
         inputFieldPanel.add(new JLabel("Buchstaben oder Wort:"));
