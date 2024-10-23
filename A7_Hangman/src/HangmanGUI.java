@@ -16,6 +16,8 @@ public class HangmanGUI extends JFrame {
     private JTextArea guessedLettersArea; // Zeigt die bereits geratenen Buchstaben und Wörter
     private JPanel imagePanel;          // Panel für das Bild
     private BufferedImage hangmanImage; // Hält das aktuelle Hangman-Bild
+    private JLabel statusLabel;         // Zeigt den Status des Spiels (Gewonnen/Verloren)
+    private JButton restartButton;      // Button zum Neustarten des Spiels
 
     public HangmanGUI(Hangman game) {
         this.game = game;
@@ -85,8 +87,26 @@ public class HangmanGUI extends JFrame {
         wordLabel.setFont(new Font("Arial", Font.BOLD, 24));
         wordLabel.setHorizontalAlignment(SwingConstants.CENTER);
 
-        // Füge SplitPane und das Wortpanel zur Hauptansicht hinzu
+        // Statuslabel für das Spielende (über die gesamte Breite)
+        statusLabel = new JLabel(" ");
+        statusLabel.setFont(new Font("Arial", Font.BOLD, 18));
+        statusLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        statusLabel.setForeground(Color.RED);
+
+        // Neustart-Button hinzufügen, standardmäßig deaktiviert
+        restartButton = new JButton("Neustarten");
+        restartButton.setEnabled(false);  // Standardmäßig deaktiviert
+        restartButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                resetGame();
+            }
+        });
+
+        // Füge SplitPane, Statuslabel, Neustartbutton und das Wortpanel zur Hauptansicht hinzu
         add(splitPane, BorderLayout.CENTER);
+        add(statusLabel, BorderLayout.NORTH);
+        add(restartButton, BorderLayout.SOUTH);
         add(wordLabel, BorderLayout.SOUTH);
 
         // GUI sichtbar machen
@@ -104,7 +124,7 @@ public class HangmanGUI extends JFrame {
 
             // Wenn keine Eingabe vorhanden ist
             if (guess.isEmpty()) {
-                JOptionPane.showMessageDialog(null, "Bitte einen Buchstaben oder ein Wort eingeben.");
+                statusLabel.setText("Bitte einen Buchstaben oder ein Wort eingeben.");
                 return;
             }
 
@@ -118,13 +138,19 @@ public class HangmanGUI extends JFrame {
             // Zeige die geratenen Buchstaben und Wörter an (Verwendung der Methode aus der Hangman-Klasse)
             guessedLettersArea.setText(game.getAllGuessedStrings());
 
-            // Prüft, ob das Spiel gewonnen oder verloren wurde
+            // Prüft, ob das Spiel gewonnen wurde
             if (game.isGameWon()) {
-                JOptionPane.showMessageDialog(null, "Glückwunsch, du hast das Wort erraten: " + game.getWordToGuess());
-                resetGame();
-            } else if (game.isGameOver()) {
-                JOptionPane.showMessageDialog(null, "Game Over! Das gesuchte Wort war: " + game.getWordToGuess());
-                resetGame();
+                statusLabel.setText("Glückwunsch! Du hast das Wort erraten.");
+                guessButton.setEnabled(false); // Deaktiviere Ratebutton
+                restartButton.setEnabled(true); // Aktiviere Neustart-Button
+            }
+            // Prüft, ob das Spiel verloren wurde
+            else if (game.isGameOver()) {
+                statusLabel.setText("Game Over! Das gesuchte Wort war: " + game.getWordToGuess());
+                guessButton.setEnabled(false); // Deaktiviere Ratebutton
+                restartButton.setEnabled(true); // Aktiviere Neustart-Button
+            } else {
+                statusLabel.setText(" ");
             }
 
             // Lösche das Eingabefeld nach der Eingabe
@@ -135,11 +161,15 @@ public class HangmanGUI extends JFrame {
 
     // Methode zum Zurücksetzen des Spiels
     private void resetGame() {
+        // Setze das Spiel zurück, aber nur, wenn der Neustart-Button gedrückt wurde
         String[] wordList = {"hangman", "java", "computer", "spiel", "entwicklung"};
         game = new Hangman(wordList[(int)(Math.random() * wordList.length)], 6);
         wordLabel.setText("Wort: " + game.getCurrentWordState());
         remainingAttemptsLabel.setText("Verbleibende Versuche: " + game.getRemainingAttempts());
         guessedLettersArea.setText("");
+        statusLabel.setText("");  // Lösche Status-Nachricht nach dem Zurücksetzen
+        guessButton.setEnabled(true);  // Reaktiviere Ratebutton
+        restartButton.setEnabled(false);  // Deaktiviere Neustartbutton bis Spielende
         updateHangmanImage(); // Bild zurücksetzen
     }
 
