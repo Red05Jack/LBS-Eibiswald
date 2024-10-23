@@ -37,7 +37,7 @@ public class Hangman {
     }
 
 
-    
+
     // Methode um den aktuellen Zustand des Wortes (erratene Buchstaben) zurückzugeben
     public String getCurrentWordState() {
         StringBuilder currentState = new StringBuilder();
@@ -52,6 +52,37 @@ public class Hangman {
         }
 
         return currentState.toString();
+    }
+
+
+    // Methode um zu prüfen, ob das Spiel gewonnen wurde
+    public boolean isGameWon() {
+        for (char letter : wordToGuess.toCharArray()) {
+            if (!correctLetters.contains(letter)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    // Methode um zu prüfen, ob das Spiel verloren wurde
+    public boolean isGameOver() {
+        return remainingAttempts <= 0;
+
+
+    }
+
+
+    // Methode um die verbleibenden Versuche zu erhalten
+    public int getRemainingAttempts() {
+        return remainingAttempts;
+    }
+
+
+
+    // Methode um das gesuchte Wort zurückzugeben
+    public String getWordToGuess() {
+        return wordToGuess;
     }
 
 
