@@ -2,7 +2,10 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
+import javax.imageio.ImageIO;
 
 public class HangmanGUI extends JFrame {
     private Hangman game;
@@ -11,7 +14,8 @@ public class HangmanGUI extends JFrame {
     private JTextField guessField;      // Eingabefeld für den geratenen Buchstaben oder das Wort
     private JButton guessButton;        // Button zum Abgeben des Rates
     private JTextArea guessedLettersArea; // Zeigt die bereits geratenen Buchstaben und Wörter
-    private JLabel imageLabel;          // Label für das Bild (links)
+    private JPanel imagePanel;          // Panel für das Bild
+    private BufferedImage hangmanImage; // Hält das aktuelle Hangman-Bild
 
     public HangmanGUI(Hangman game) {
         this.game = game;
@@ -32,10 +36,16 @@ public class HangmanGUI extends JFrame {
         splitPane.setResizeWeight(0.67);  // Setze das Verhältnis auf 2:1 (links zu rechts)
 
         // Panel für das Bild (links) - Bildseitenverhältnis 1:1 sicherstellen
-        JPanel imagePanel = new JPanel();
-        imageLabel = new JLabel();
-        updateHangmanImage(); // Initialisiere das Bild entsprechend den verbleibenden Versuchen
-        imagePanel.add(imageLabel);
+        imagePanel = new JPanel() {
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                if (hangmanImage != null) {
+                    // Skalierung des Bildes auf die Größe des Panels
+                    g.drawImage(hangmanImage, 0, 0, getWidth(), getHeight(), this);
+                }
+            }
+        };
         imagePanel.setPreferredSize(new Dimension(400, 400));
         imagePanel.setBackground(Color.LIGHT_GRAY);
 
@@ -78,6 +88,9 @@ public class HangmanGUI extends JFrame {
 
         // GUI sichtbar machen
         setVisible(true);
+
+        // Lade das initiale Bild
+        updateHangmanImage();
     }
 
     // Listener für den Raten-Button
@@ -127,20 +140,21 @@ public class HangmanGUI extends JFrame {
         updateHangmanImage(); // Bild zurücksetzen
     }
 
-    // Methode zum Aktualisieren des Bildes basierend auf den verbleibenden Versuchen
+    // Methode zum Laden und Skalieren des Bildes basierend auf den verbleibenden Versuchen
     private void updateHangmanImage() {
         int remainingAttempts = game.getRemainingAttempts();
         int imageIndex = 11 - remainingAttempts; // Bildpfad (0.png bis 11.png)
 
         String imagePath = "./images/" + imageIndex + ".png"; // Pfad zum Bild
 
-        // Überprüfen, ob die Bilddatei existiert
-        File imageFile = new File(imagePath);
-        if (imageFile.exists()) {
-            ImageIcon imageIcon = new ImageIcon(imagePath);
-            imageLabel.setIcon(imageIcon);
-        } else {
-            imageLabel.setText("Bild nicht gefunden");
+        // Lade das Bild und skalieren es, falls es existiert
+        try {
+            hangmanImage = ImageIO.read(new File(imagePath));
+        } catch (IOException e) {
+            hangmanImage = null;
         }
+
+        // Repaint das Panel, damit das Bild neu gezeichnet wird
+        imagePanel.repaint();
     }
 }
