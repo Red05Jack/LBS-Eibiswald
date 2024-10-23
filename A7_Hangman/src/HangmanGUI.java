@@ -67,6 +67,8 @@ public class HangmanGUI extends JFrame {
         // Panel für bereits geratene Buchstaben und Wörter (größerer Bereich)
         guessedLettersArea = new JTextArea(10, 20);  // Vergrößere die Textfläche
         guessedLettersArea.setEditable(false);
+        guessedLettersArea.setLineWrap(true);  // Aktiviert Zeilenumbruch
+        guessedLettersArea.setWrapStyleWord(true);  // Bricht bei Wortgrenzen um
         JScrollPane scrollPane = new JScrollPane(guessedLettersArea);
         inputPanel.add(scrollPane, BorderLayout.CENTER);
 
