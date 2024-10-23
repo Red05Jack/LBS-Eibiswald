@@ -18,6 +18,22 @@ public class Hangman {
 
     // Methode um zu raten und zu prüfen, ob der Buchstabe im Wort ist
     public boolean guessLetter(char letter) {
+        letter = Character.toLowerCase(letter);
+
+        if (guessedLetters.contains(letter)) {
+            System.out.println("Dieser Buchstabe wurde bereits geraten.");
+            return false;
+        }
+
+        guessedLetters.add(letter);
+
+        if (wordToGuess.indexOf(letter) >= 0) {
+            correctLetters.add(letter);
+            return true;
+        } else {
+            remainingAttempts--;
+            return false;
+        }
     }
 
 
