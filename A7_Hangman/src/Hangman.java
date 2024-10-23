@@ -37,4 +37,22 @@ public class Hangman {
     }
 
 
+    
+    // Methode um den aktuellen Zustand des Wortes (erratene Buchstaben) zurückzugeben
+    public String getCurrentWordState() {
+        StringBuilder currentState = new StringBuilder();
+
+
+        for (char letter : wordToGuess.toCharArray()) {
+            if (correctLetters.contains(letter)) {
+                currentState.append(letter);
+            } else {
+                currentState.append('_');
+            }
+        }
+
+        return currentState.toString();
+    }
+
+
 }
