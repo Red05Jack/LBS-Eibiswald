@@ -7,6 +7,7 @@ public class Hangman {
     private int remainingAttempts;    // Verbleibende Versuche
     private Set<Character> guessedLetters; // Bereits geratene Buchstaben
     private Set<Character> correctLetters; // Korrekt geratene Buchstaben
+    private Set<String> guessedWords; // Bereits geratene Wörter
 
     public Hangman(String wordToGuess, int maxAttempts) {
         this.wordToGuess = wordToGuess.toLowerCase();
@@ -14,9 +15,10 @@ public class Hangman {
         this.remainingAttempts = maxAttempts;
         this.guessedLetters = new HashSet<>();
         this.correctLetters = new HashSet<>();
+        this.guessedWords = new HashSet<>();
     }
 
-    // Methode um zu raten und zu prüfen, ob der Buchstabe im Wort ist
+    // Methode um Buchstaben oder ein ganzes Wort zu raten
     public boolean guessLetterOrWord(String guess) {
         // Überprüfen, ob der String leer ist
         if (guess == null || guess.isEmpty()) {
@@ -30,13 +32,16 @@ public class Hangman {
         if (guess.length() == 1) {
             char letter = guess.charAt(0);
 
+            // Überprüfen, ob der Buchstabe bereits geraten wurde
             if (guessedLetters.contains(letter)) {
                 System.out.println("Dieser Buchstabe wurde bereits geraten.");
                 return false;
             }
 
+            // Buchstaben zur Liste der geratenen Buchstaben hinzufügen
             guessedLetters.add(letter);
 
+            // Wenn der Buchstabe im Wort ist
             if (wordToGuess.indexOf(letter) >= 0) {
                 correctLetters.add(letter);
                 return true;
@@ -47,12 +52,20 @@ public class Hangman {
         }
         // Wenn die Länge des Strings größer als 1 ist, wird es als Wort behandelt
         else {
+            // Überprüfen, ob das Wort bereits geraten wurde
+            if (guessedWords.contains(guess)) {
+                System.out.println("Dieses Wort wurde bereits geraten.");
+                return false;
+            }
+
+            // Wort zur Liste der geratenen Wörter hinzufügen
+            guessedWords.add(guess);
+
+            // Wenn das geratene Wort korrekt ist
             if (guess.equals(wordToGuess)) {
-                // Der Spieler hat das richtige Wort geraten
                 correctLetters.addAll(lettersInWord());
                 return true;
             } else {
-                // Der Spieler hat das falsche Wort geraten
                 remainingAttempts--;
                 return false;
             }
@@ -68,12 +81,9 @@ public class Hangman {
         return letters;
     }
 
-
-
     // Methode um den aktuellen Zustand des Wortes (erratene Buchstaben) zurückzugeben
     public String getCurrentWordState() {
         StringBuilder currentState = new StringBuilder();
-
 
         for (char letter : wordToGuess.toCharArray()) {
             if (correctLetters.contains(letter)) {
@@ -85,7 +95,6 @@ public class Hangman {
 
         return currentState.toString();
     }
-
 
     // Methode um zu prüfen, ob das Spiel gewonnen wurde
     public boolean isGameWon() {
@@ -100,22 +109,15 @@ public class Hangman {
     // Methode um zu prüfen, ob das Spiel verloren wurde
     public boolean isGameOver() {
         return remainingAttempts <= 0;
-
-
     }
-
 
     // Methode um die verbleibenden Versuche zu erhalten
     public int getRemainingAttempts() {
         return remainingAttempts;
     }
 
-
-
     // Methode um das gesuchte Wort zurückzugeben
     public String getWordToGuess() {
         return wordToGuess;
     }
-
-
 }
