@@ -32,7 +32,7 @@ public class AccountingGUI extends JFrame {
         setLayout(new BorderLayout());
 
         // Tabelle
-        String[] columnNames = {"ID", "Bezeichnung", "Einnahmen", "Ausgaben", "Datum", "Gesamt", "Details"};
+        String[] columnNames = {"ID", "Bezeichnung", "Einnahmen", "Ausgaben", "Datum", "Info"};
         tableModel = new DefaultTableModel(columnNames, 0);
         table = new JTable(tableModel);
         JScrollPane tableScrollPane = new JScrollPane(table);
@@ -146,36 +146,10 @@ public class AccountingGUI extends JFrame {
                     isIncome ? booking.getBetrag() : "",  // Wenn Einnahme, Betrag hier, ansonsten leer
                     !isIncome ? booking.getBetrag() : "",  // Wenn Ausgabe, Betrag hier, ansonsten leer
                     booking.getDatumZeit(),
-                    booking.getBetrag(),
-                    createDetailsButton(booking)  // Erstelle einen Button, um Details anzuzeigen
+                    booking.getInfo()  // Zeige die Zusatzinfo im "Info"-Feld
             };
             tableModel.addRow(rowData);
         }
-    }
-
-    // Erstelle einen Button, um die Details der Buchung anzuzeigen
-    private JButton createDetailsButton(Booking booking) {
-        JButton button = new JButton("Details");
-        button.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                showDetailsPopup(booking);
-            }
-        });
-        return button;
-    }
-
-    // Zeigt ein Popup-Fenster mit allen Buchungsdetails an
-    private void showDetailsPopup(Booking booking) {
-        Category category = accounting.getCategoryById(booking.getKatId());
-        String message = String.format("ID: %d\nBezeichnung: %s\nBetrag: %.2f\nDatum: %s\nZusatzinfo: %s",
-                booking.getId(),
-                category.getName(),
-                booking.getBetrag(),
-                booking.getDatumZeit(),
-                booking.getInfo());
-
-        JOptionPane.showMessageDialog(this, message, "Details", JOptionPane.INFORMATION_MESSAGE);
     }
 
     // Neue Buchung erstellen
