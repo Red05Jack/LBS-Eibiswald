@@ -43,13 +43,17 @@ public class AccountingGUI extends JFrame {
         tableModel = new DefaultTableModel(columnNames, 0);
         table = new JTable(tableModel);
         table.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);  // Mehrfachauswahl erlauben
+
+        // Tabelle mit Scrollpane (mit Margin)
         JScrollPane tableScrollPane = new JScrollPane(table);
+        tableScrollPane.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));  // Margin: 10px um die Tabelle
         add(tableScrollPane, BorderLayout.CENTER);
 
-        // Eingabebereich rechts
+        // Eingabebereich rechts (mit Margin)
         JPanel inputPanel = new JPanel();
         inputPanel.setLayout(new GridLayout(9, 1, 10, 10));  // Schema angepasst
         inputPanel.setPreferredSize(new Dimension(300, 0));  // Festgelegte Breite des rechten Panels
+        inputPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));  // Margin: 10px um den Eingabebereich
 
         // Betrag Label und Eingabefeld
         inputPanel.add(new JLabel("Betrag:"));
@@ -87,9 +91,10 @@ public class AccountingGUI extends JFrame {
 
         add(inputPanel, BorderLayout.EAST);
 
-        // Filter Bereich unten
+        // Filter Bereich unten (mit Margin)
         JPanel filterPanel = new JPanel();
         filterPanel.setLayout(new GridLayout(1, 8, 10, 10));  // 1 Zeile für alle Suchfelder und Buttons
+        filterPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));  // Margin: 10px um den Filterbereich
 
         // Datum von
         searchDateFromField = new JTextField("Datum von");
@@ -280,7 +285,7 @@ public class AccountingGUI extends JFrame {
         searchInfoField.setText("Info");
         searchInfoField.setForeground(Color.GRAY);
     }
-    
+
     // Buchungen in die Tabelle laden
     private void loadBookingsIntoTable() {
         List<Booking> bookings = accounting.getAllBookings();
