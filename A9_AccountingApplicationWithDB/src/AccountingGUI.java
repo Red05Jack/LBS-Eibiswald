@@ -65,10 +65,12 @@ public class AccountingGUI extends JFrame {
         inputPanel.add(categoryPanel);
 
         // Button für "NEW", "LOAD", "SAVE" und "DELETE"
+        JButton clearButton = new JButton("CLEAR");
         JButton loadButton = new JButton("LOAD");
         JButton saveButton = new JButton("SAVE");
         JButton deleteButton = new JButton("DELETE");
 
+        inputPanel.add(clearButton);
         JPanel buttonPanel = new JPanel(new GridLayout(1, 2, 10, 10));
         buttonPanel.add(loadButton);
         buttonPanel.add(saveButton);
@@ -96,6 +98,14 @@ public class AccountingGUI extends JFrame {
         filterPanel.add(resetButton);
 
         add(filterPanel, BorderLayout.SOUTH);
+
+        // Button Aktionen
+        clearButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                clearInputs();
+            }
+        });
 
         loadButton.addActionListener(new ActionListener() {
             @Override
@@ -151,10 +161,35 @@ public class AccountingGUI extends JFrame {
 
     // Neue Kategorie hinzufügen
     private void addNewCategory() {
-        String name = JOptionPane.showInputDialog(this, "Geben Sie den Namen der neuen Kategorie ein:");
-        if (name != null && !name.trim().isEmpty()) {
-            accounting.addCategory(name, "", true);  // Du kannst das "Ein_Aus" anpassen oder erweitern
-            loadCategoriesIntoComboBox();  // Nach dem Hinzufügen neu laden
+        JPanel panel = new JPanel(new GridLayout(3, 2));
+
+        // Name der Kategorie
+        panel.add(new JLabel("Name (max 100 Zeichen):"));
+        JTextField nameField = new JTextField();
+        panel.add(nameField);
+
+        // Kürzel der Kategorie
+        panel.add(new JLabel("Kürzel (max 5 Zeichen):"));
+        JTextField kurzField = new JTextField();
+        panel.add(kurzField);
+
+        // Einnahme oder Ausgabe auswählen
+        panel.add(new JLabel("Typ:"));
+        JComboBox<String> einAusComboBox = new JComboBox<>(new String[] {"Einnahme", "Ausgabe"});
+        panel.add(einAusComboBox);
+
+        int result = JOptionPane.showConfirmDialog(null, panel, "Neue Kategorie erstellen", JOptionPane.OK_CANCEL_OPTION);
+        if (result == JOptionPane.OK_OPTION) {
+            String name = nameField.getText();
+            String kurz = kurzField.getText();
+            boolean isEinnahme = einAusComboBox.getSelectedItem().equals("Einnahme");
+
+            if (name.length() <= 100 && kurz.length() <= 5) {
+                accounting.addCategory(name, kurz, !isEinnahme);  // "isEinnahme = false" bedeutet Ausgabe
+                loadCategoriesIntoComboBox();  // Nach dem Hinzufügen neu laden
+            } else {
+                JOptionPane.showMessageDialog(this, "Der Name darf max. 100 Zeichen und das Kürzel max. 5 Zeichen haben.");
+            }
         }
     }
 
