@@ -17,6 +17,13 @@ public class AccountingGUI extends JFrame {
     private JTextField filterFrom;
     private JTextField filterTo;
 
+    // Suchfelder
+    private JTextField searchDateFromField;
+    private JTextField searchDateToField;
+    private JComboBox<String> searchCategoryComboBox;
+    private JComboBox<String> searchEinAusComboBox;
+    private JTextField searchInfoField;
+
     public AccountingGUI(String dbUrl, String user, String pass) {
         accounting = new Accounting(dbUrl, user, pass);
         initComponents();
@@ -82,21 +89,43 @@ public class AccountingGUI extends JFrame {
 
         // Filter Bereich unten
         JPanel filterPanel = new JPanel();
-        filterPanel.setLayout(new FlowLayout());
+        filterPanel.setLayout(new GridLayout(2, 1));
 
-        filterPanel.add(new JLabel("Filter von:"));
-        filterFrom = new JTextField(10);
-        filterPanel.add(filterFrom);
+        // Erste Reihe: Suchfelder
+        JPanel searchPanel = new JPanel();
+        searchPanel.setLayout(new GridLayout(1, 6, 10, 10));
 
-        filterPanel.add(new JLabel("bis:"));
-        filterTo = new JTextField(10);
-        filterPanel.add(filterTo);
+        searchPanel.add(new JLabel("Datum von:"));
+        searchDateFromField = new JTextField(10);
+        searchPanel.add(searchDateFromField);
 
-        JButton searchButton = new JButton("Search");
-        filterPanel.add(searchButton);
+        searchPanel.add(new JLabel("Datum bis:"));
+        searchDateToField = new JTextField(10);
+        searchPanel.add(searchDateToField);
 
-        JButton resetButton = new JButton("Reset");
-        filterPanel.add(resetButton);
+        searchPanel.add(new JLabel("Kategorie:"));
+        searchCategoryComboBox = new JComboBox<>();
+        searchPanel.add(searchCategoryComboBox);
+
+        searchPanel.add(new JLabel("Ein/Ausgabe:"));
+        searchEinAusComboBox = new JComboBox<>(new String[]{"Alle", "Einnahme", "Ausgabe"});
+        searchPanel.add(searchEinAusComboBox);
+
+        searchPanel.add(new JLabel("Info:"));
+        searchInfoField = new JTextField(10);
+        searchPanel.add(searchInfoField);
+
+        // Zweite Reihe: Buttons
+        JPanel buttonRow = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        JButton searchButton = new JButton("SEARCH");
+        JButton clearSearchButton = new JButton("CLEAR");
+
+        buttonRow.add(searchButton);
+        buttonRow.add(clearSearchButton);
+
+        // FilterPanel anpassen
+        filterPanel.add(searchPanel);
+        filterPanel.add(buttonRow);
 
         add(filterPanel, BorderLayout.SOUTH);
 
@@ -139,14 +168,14 @@ public class AccountingGUI extends JFrame {
         searchButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                filterBookings();
+                searchBookings();
             }
         });
 
-        resetButton.addActionListener(new ActionListener() {
+        clearSearchButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                resetFilters();
+                clearSearchFields();
             }
         });
     }
@@ -155,8 +184,11 @@ public class AccountingGUI extends JFrame {
     private void loadCategoriesIntoComboBox() {
         List<Category> categories = accounting.getAllCategories();
         categoryComboBox.removeAllItems();
+        searchCategoryComboBox.removeAllItems();  // Auch in der Suche aktualisieren
+        searchCategoryComboBox.addItem("Alle");   // "Alle" als Standardwert hinzufügen
         for (Category category : categories) {
             categoryComboBox.addItem(category.getName());
+            searchCategoryComboBox.addItem(category.getName());  // Für die Suche
         }
     }
 
@@ -176,7 +208,7 @@ public class AccountingGUI extends JFrame {
 
         // Einnahme oder Ausgabe auswählen
         panel.add(new JLabel("Typ:"));
-        JComboBox<String> einAusComboBox = new JComboBox<>(new String[] {"Einnahme", "Ausgabe"});
+        JComboBox<String> einAusComboBox = new JComboBox<>(new String[]{"Einnahme", "Ausgabe"});
         panel.add(einAusComboBox);
 
         int result = JOptionPane.showConfirmDialog(null, panel, "Neue Kategorie erstellen", JOptionPane.OK_CANCEL_OPTION);
@@ -192,6 +224,15 @@ public class AccountingGUI extends JFrame {
                 JOptionPane.showMessageDialog(this, "Der Name darf max. 100 Zeichen und das Kürzel max. 5 Zeichen haben.");
             }
         }
+    }
+
+    // Suchkriterien zurücksetzen
+    private void clearSearchFields() {
+        searchDateFromField.setText("");
+        searchDateToField.setText("");
+        searchCategoryComboBox.setSelectedIndex(0);
+        searchEinAusComboBox.setSelectedIndex(0);
+        searchInfoField.setText("");
     }
 
     // Buchungen in die Tabelle laden
@@ -212,6 +253,27 @@ public class AccountingGUI extends JFrame {
             };
             tableModel.addRow(rowData);
         }
+    }
+
+    // Buchungen anhand der Suchkriterien filtern
+    private void searchBookings() {
+        // Beispiel: Suche nach Kriterien aus den Suchfeldern
+        String dateFrom = searchDateFromField.getText();
+        String dateTo = searchDateToField.getText();
+        String selectedCategory = (String) searchCategoryComboBox.getSelectedItem();
+        String selectedEinAus = (String) searchEinAusComboBox.getSelectedItem();
+        String infoKeyword = searchInfoField.getText();
+
+        // Hier könntest du deine eigene Filterlogik hinzufügen, die auf den eingegebenen Werten basiert
+        System.out.println("Suchkriterien:");
+        System.out.println("Datum von: " + dateFrom);
+        System.out.println("Datum bis: " + dateTo);
+        System.out.println("Kategorie: " + selectedCategory);
+        System.out.println("Ein/Ausgabe: " + selectedEinAus);
+        System.out.println("Info-Schlagwort: " + infoKeyword);
+
+        // Nach Anwendung der Filter kann die Tabelle neu geladen werden
+        loadBookingsIntoTable();  // Eventuell muss diese Methode angepasst werden, um gefilterte Ergebnisse zu laden
     }
 
     // Buchung speichern
