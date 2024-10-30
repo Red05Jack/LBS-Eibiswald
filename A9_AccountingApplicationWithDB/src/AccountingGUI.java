@@ -89,11 +89,7 @@ public class AccountingGUI extends JFrame {
 
         // Filter Bereich unten
         JPanel filterPanel = new JPanel();
-        filterPanel.setLayout(new GridLayout(2, 1));
-
-        // Erste Reihe: Suchfelder
-        JPanel searchPanel = new JPanel();
-        searchPanel.setLayout(new GridLayout(1, 6, 10, 10));
+        filterPanel.setLayout(new GridLayout(1, 8, 10, 10));  // 1 Zeile für alle Suchfelder und Buttons
 
         // Datum von
         searchDateFromField = new JTextField("Datum von");
@@ -113,7 +109,7 @@ public class AccountingGUI extends JFrame {
                 }
             }
         });
-        searchPanel.add(searchDateFromField);
+        filterPanel.add(searchDateFromField);
 
         // Datum bis
         searchDateToField = new JTextField("Datum bis");
@@ -133,16 +129,16 @@ public class AccountingGUI extends JFrame {
                 }
             }
         });
-        searchPanel.add(searchDateToField);
+        filterPanel.add(searchDateToField);
 
         // Kategorie Dropdown
         searchCategoryComboBox = new JComboBox<>();
         searchCategoryComboBox.addItem("Alle Kategorien");  // "Alle Kategorien" als Platzhalter
-        searchPanel.add(searchCategoryComboBox);
+        filterPanel.add(searchCategoryComboBox);
 
         // Ein/Ausgabe Dropdown
         searchEinAusComboBox = new JComboBox<>(new String[]{"Ein/Ausgabe", "Einnahme", "Ausgabe"});
-        searchPanel.add(searchEinAusComboBox);
+        filterPanel.add(searchEinAusComboBox);
 
         // Info
         searchInfoField = new JTextField("Info");
@@ -162,19 +158,14 @@ public class AccountingGUI extends JFrame {
                 }
             }
         });
-        searchPanel.add(searchInfoField);
+        filterPanel.add(searchInfoField);
 
-        // Zweite Reihe: Buttons
-        JPanel buttonRow = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        // Such- und Clear-Button in der gleichen Zeile
         JButton searchButton = new JButton("SEARCH");
         JButton clearSearchButton = new JButton("CLEAR");
 
-        buttonRow.add(searchButton);
-        buttonRow.add(clearSearchButton);
-
-        // FilterPanel anpassen
-        filterPanel.add(searchPanel);
-        filterPanel.add(buttonRow);
+        filterPanel.add(searchButton);
+        filterPanel.add(clearSearchButton);
 
         add(filterPanel, BorderLayout.SOUTH);
 
@@ -224,7 +215,7 @@ public class AccountingGUI extends JFrame {
         clearSearchButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                clearSearchFields();
+                clearSearchFields();  // Methode zum Zurücksetzen der Felder
             }
         });
     }
@@ -275,15 +266,21 @@ public class AccountingGUI extends JFrame {
         }
     }
 
-    // Suchkriterien zurücksetzen
+    // Suchfelder und Platzhalter zurücksetzen
     private void clearSearchFields() {
-        searchDateFromField.setText("");
-        searchDateToField.setText("");
-        searchCategoryComboBox.setSelectedIndex(0);
-        searchEinAusComboBox.setSelectedIndex(0);
-        searchInfoField.setText("");
-    }
+        searchDateFromField.setText("Datum von");
+        searchDateFromField.setForeground(Color.GRAY);
 
+        searchDateToField.setText("Datum bis");
+        searchDateToField.setForeground(Color.GRAY);
+
+        searchCategoryComboBox.setSelectedIndex(0);  // Setzt auf "Alle Kategorien"
+        searchEinAusComboBox.setSelectedIndex(0);    // Setzt auf "Ein/Ausgabe"
+
+        searchInfoField.setText("Info");
+        searchInfoField.setForeground(Color.GRAY);
+    }
+    
     // Buchungen in die Tabelle laden
     private void loadBookingsIntoTable() {
         List<Booking> bookings = accounting.getAllBookings();
