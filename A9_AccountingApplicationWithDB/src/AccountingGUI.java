@@ -95,24 +95,73 @@ public class AccountingGUI extends JFrame {
         JPanel searchPanel = new JPanel();
         searchPanel.setLayout(new GridLayout(1, 6, 10, 10));
 
-        searchPanel.add(new JLabel("Datum von:"));
-        searchDateFromField = new JTextField(10);
+        // Datum von
+        searchDateFromField = new JTextField("Datum von");
+        searchDateFromField.setForeground(Color.GRAY);
+        searchDateFromField.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                if (searchDateFromField.getText().equals("Datum von")) {
+                    searchDateFromField.setText("");
+                    searchDateFromField.setForeground(Color.BLACK);
+                }
+            }
+
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                if (searchDateFromField.getText().isEmpty()) {
+                    searchDateFromField.setText("Datum von");
+                    searchDateFromField.setForeground(Color.GRAY);
+                }
+            }
+        });
         searchPanel.add(searchDateFromField);
 
-        searchPanel.add(new JLabel("Datum bis:"));
-        searchDateToField = new JTextField(10);
+        // Datum bis
+        searchDateToField = new JTextField("Datum bis");
+        searchDateToField.setForeground(Color.GRAY);
+        searchDateToField.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                if (searchDateToField.getText().equals("Datum bis")) {
+                    searchDateToField.setText("");
+                    searchDateToField.setForeground(Color.BLACK);
+                }
+            }
+
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                if (searchDateToField.getText().isEmpty()) {
+                    searchDateToField.setText("Datum bis");
+                    searchDateToField.setForeground(Color.GRAY);
+                }
+            }
+        });
         searchPanel.add(searchDateToField);
 
-        searchPanel.add(new JLabel("Kategorie:"));
+        // Kategorie Dropdown
         searchCategoryComboBox = new JComboBox<>();
+        searchCategoryComboBox.addItem("Alle Kategorien");  // "Alle Kategorien" als Platzhalter
         searchPanel.add(searchCategoryComboBox);
 
-        searchPanel.add(new JLabel("Ein/Ausgabe:"));
-        searchEinAusComboBox = new JComboBox<>(new String[]{"Alle", "Einnahme", "Ausgabe"});
+        // Ein/Ausgabe Dropdown
+        searchEinAusComboBox = new JComboBox<>(new String[]{"Ein/Ausgabe", "Einnahme", "Ausgabe"});
         searchPanel.add(searchEinAusComboBox);
 
-        searchPanel.add(new JLabel("Info:"));
-        searchInfoField = new JTextField(10);
+        // Info
+        searchInfoField = new JTextField("Info");
+        searchInfoField.setForeground(Color.GRAY);
+        searchInfoField.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                if (searchInfoField.getText().equals("Info")) {
+                    searchInfoField.setText("");
+                    searchInfoField.setForeground(Color.BLACK);
+                }
+            }
+
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                if (searchInfoField.getText().isEmpty()) {
+                    searchInfoField.setText("Info");
+                    searchInfoField.setForeground(Color.GRAY);
+                }
+            }
+        });
         searchPanel.add(searchInfoField);
 
         // Zweite Reihe: Buttons
@@ -185,7 +234,7 @@ public class AccountingGUI extends JFrame {
         List<Category> categories = accounting.getAllCategories();
         categoryComboBox.removeAllItems();
         searchCategoryComboBox.removeAllItems();  // Auch in der Suche aktualisieren
-        searchCategoryComboBox.addItem("Alle");   // "Alle" als Standardwert hinzufügen
+        searchCategoryComboBox.addItem("Alle Kategorien");   // "Alle Kategorien" als Standardwert hinzufügen
         for (Category category : categories) {
             categoryComboBox.addItem(category.getName());
             searchCategoryComboBox.addItem(category.getName());  // Für die Suche
