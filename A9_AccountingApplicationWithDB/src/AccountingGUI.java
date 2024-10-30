@@ -64,7 +64,7 @@ public class AccountingGUI extends JFrame {
         inputPanel.add(new JLabel("Kategorie:"));
         inputPanel.add(categoryPanel);
 
-        // Button für "NEW", "LOAD", "SAVE" und "DELETE"
+        // Button für "CLEAR", "LOAD", "SAVE" und "DELETE"
         JButton clearButton = new JButton("CLEAR");
         JButton loadButton = new JButton("LOAD");
         JButton saveButton = new JButton("SAVE");
@@ -103,7 +103,7 @@ public class AccountingGUI extends JFrame {
         clearButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                clearInputs();
+                clearInputs();  // Neue Methode zum Leeren der Felder und Zurücksetzen der Tabellenauswahl
             }
         });
 
@@ -264,11 +264,12 @@ public class AccountingGUI extends JFrame {
         categoryComboBox.setSelectedItem(category.getName());
     }
 
-    // Eingabefelder leeren
+    // Eingabefelder leeren und Tabellenauswahl zurücksetzen
     private void clearInputs() {
         betragField.setText("");
         infoField.setText("");
-        categoryComboBox.setSelectedIndex(-1);  // Keine Auswahl
+        categoryComboBox.setSelectedIndex(-1);  // Keine Auswahl in der Kategorie
+        table.clearSelection();  // Auswahl in der Tabelle aufheben
     }
 
     // Filter anwenden
