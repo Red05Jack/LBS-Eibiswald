@@ -20,6 +20,16 @@ public class Accounting {
         return db.getAllCategories();
     }
 
+    // Methode, um eine Kategorie nach ID zu bekommen
+    public Category getCategoryById(long id) {
+        return db.getCategoryById(id);  // Neu hinzugefügte Funktion in der Database-Klasse
+    }
+
+    // Methode, um die Kategorie-ID basierend auf dem Namen zu bekommen
+    public long getCategoryIdByName(String name) {
+        return db.getCategoryIdByName(name);  // Neu hinzugefügte Funktion in der Database-Klasse
+    }
+
     // Methode, um eine neue Buchung hinzuzufügen
     public void addBooking(Timestamp datumZeit, String info, double betrag, long katId) {
         Booking booking = new Booking(0, datumZeit, info, betrag, katId);
