@@ -32,7 +32,7 @@ public class AccountingGUI extends JFrame {
         setLayout(new BorderLayout());
 
         // Tabelle
-        String[] columnNames = {"ID", "Bezeichnung", "Einnahmen", "Ausgaben", "Datum", "Gesamt"};
+        String[] columnNames = {"ID", "Bezeichnung", "Einnahmen", "Ausgaben", "Datum", "Gesamt", "Details"};
         tableModel = new DefaultTableModel(columnNames, 0);
         table = new JTable(tableModel);
         JScrollPane tableScrollPane = new JScrollPane(table);
@@ -137,16 +137,45 @@ public class AccountingGUI extends JFrame {
         List<Booking> bookings = accounting.getAllBookings();
         tableModel.setRowCount(0); // Löscht alle bestehenden Zeilen
         for (Booking booking : bookings) {
+            Category category = accounting.getCategoryById(booking.getKatId()); // Hole die Kategorie basierend auf KatID
+            boolean isIncome = !category.isEinAus();  // Annahme: 'Ein_Aus = false' für Einnahmen, 'true' für Ausgaben
+
             Object[] rowData = {
                     booking.getId(),
-                    booking.getInfo(),
-                    booking.getBetrag(),
-                    booking.getBetrag(),  // Einnahmen und Ausgaben sind nicht klar definiert, angenommen, das gleiche
+                    category.getName(),  // Zeige den Namen der Kategorie anstelle der Buchungsinfo
+                    isIncome ? booking.getBetrag() : "",  // Wenn Einnahme, Betrag hier, ansonsten leer
+                    !isIncome ? booking.getBetrag() : "",  // Wenn Ausgabe, Betrag hier, ansonsten leer
                     booking.getDatumZeit(),
-                    booking.getBetrag()
+                    booking.getBetrag(),
+                    createDetailsButton(booking)  // Erstelle einen Button, um Details anzuzeigen
             };
             tableModel.addRow(rowData);
         }
+    }
+
+    // Erstelle einen Button, um die Details der Buchung anzuzeigen
+    private JButton createDetailsButton(Booking booking) {
+        JButton button = new JButton("Details");
+        button.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                showDetailsPopup(booking);
+            }
+        });
+        return button;
+    }
+
+    // Zeigt ein Popup-Fenster mit allen Buchungsdetails an
+    private void showDetailsPopup(Booking booking) {
+        Category category = accounting.getCategoryById(booking.getKatId());
+        String message = String.format("ID: %d\nBezeichnung: %s\nBetrag: %.2f\nDatum: %s\nZusatzinfo: %s",
+                booking.getId(),
+                category.getName(),
+                booking.getBetrag(),
+                booking.getDatumZeit(),
+                booking.getInfo());
+
+        JOptionPane.showMessageDialog(this, message, "Details", JOptionPane.INFORMATION_MESSAGE);
     }
 
     // Neue Buchung erstellen
@@ -156,10 +185,10 @@ public class AccountingGUI extends JFrame {
         String category = (String) categoryComboBox.getSelectedItem();
 
         Timestamp currentTimestamp = new Timestamp(System.currentTimeMillis());
-        double betrag = Double.parseDouble(eingabeField.getText()); // Hier kann ein besserer Parsing-Mechanismus eingefügt werden
+        double betrag = Double.parseDouble(eingabeField.getText());
 
         // Beispielkategorie-ID (in der echten Anwendung würdest du die Kategorie-ID aus der Datenbank holen)
-        long katId = 1;
+        long katId = accounting.getCategoryIdByName(category);
 
         accounting.addBooking(currentTimestamp, info + " - " + zusatzInfo, betrag, katId);
         loadBookingsIntoTable(); // Tabelle neu laden
