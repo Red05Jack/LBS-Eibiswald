@@ -11,8 +11,8 @@ public class AccountingGUI extends JFrame {
     private JTable table;
     private DefaultTableModel tableModel;
 
-    private JTextField eingabeField;
-    private JTextField zusatzInfoField;
+    private JTextField betragField;
+    private JTextField infoField;
     private JComboBox<String> categoryComboBox;
     private JTextField filterFrom;
     private JTextField filterTo;
@@ -40,28 +40,39 @@ public class AccountingGUI extends JFrame {
 
         // Eingabebereich rechts
         JPanel inputPanel = new JPanel();
-        inputPanel.setLayout(new GridLayout(10, 2, 10, 10));  // Abstand zwischen den Komponenten erhöht
+        inputPanel.setLayout(new GridLayout(9, 1, 10, 10));  // Schema angepasst
         inputPanel.setPreferredSize(new Dimension(300, 0));  // Festgelegte Breite des rechten Panels
 
-        inputPanel.add(new JLabel("Eingabe:"));
-        eingabeField = new JTextField();
-        inputPanel.add(eingabeField);
+        // Betrag Label und Eingabefeld
+        inputPanel.add(new JLabel("Betrag:"));
+        betragField = new JTextField();
+        inputPanel.add(betragField);
 
-        inputPanel.add(new JLabel("Zusatzinfo:"));
-        zusatzInfoField = new JTextField();
-        inputPanel.add(zusatzInfoField);
+        // Info Label und Eingabefeld
+        inputPanel.add(new JLabel("Info:"));
+        infoField = new JTextField();
+        inputPanel.add(infoField);
 
-        inputPanel.add(new JLabel("Kategorie:"));
+        // Kategorie Button und ComboBox
+        JPanel categoryPanel = new JPanel();
+        categoryPanel.setLayout(new GridLayout(1, 2));
+        JButton newCategoryButton = new JButton("New Kategorie");
+        categoryPanel.add(newCategoryButton);
+
         categoryComboBox = new JComboBox<>();
-        inputPanel.add(categoryComboBox);
+        categoryPanel.add(categoryComboBox);
+        inputPanel.add(new JLabel("Kategorie:"));
+        inputPanel.add(categoryPanel);
 
-        JButton newButton = new JButton("New");
-        inputPanel.add(newButton);
+        // Button für "NEW", "LOAD", "SAVE" und "DELETE"
+        JButton loadButton = new JButton("LOAD");
+        JButton saveButton = new JButton("SAVE");
+        JButton deleteButton = new JButton("DELETE");
 
-        JButton saveButton = new JButton("Save");
-        inputPanel.add(saveButton);
-
-        JButton deleteButton = new JButton("Delete");
+        JPanel buttonPanel = new JPanel(new GridLayout(1, 2, 10, 10));
+        buttonPanel.add(loadButton);
+        buttonPanel.add(saveButton);
+        inputPanel.add(buttonPanel);
         inputPanel.add(deleteButton);
 
         add(inputPanel, BorderLayout.EAST);
@@ -86,18 +97,17 @@ public class AccountingGUI extends JFrame {
 
         add(filterPanel, BorderLayout.SOUTH);
 
-        // Button Aktionen
-        newButton.addActionListener(new ActionListener() {
+        loadButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                createNewBooking();
+                loadSelectedBooking();
             }
         });
 
         saveButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                updateBooking();
+                saveBooking();
             }
         });
 
@@ -105,6 +115,13 @@ public class AccountingGUI extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 deleteBooking();
+            }
+        });
+
+        newCategoryButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                addNewCategory();
             }
         });
 
@@ -132,6 +149,15 @@ public class AccountingGUI extends JFrame {
         }
     }
 
+    // Neue Kategorie hinzufügen
+    private void addNewCategory() {
+        String name = JOptionPane.showInputDialog(this, "Geben Sie den Namen der neuen Kategorie ein:");
+        if (name != null && !name.trim().isEmpty()) {
+            accounting.addCategory(name, "", true);  // Du kannst das "Ein_Aus" anpassen oder erweitern
+            loadCategoriesIntoComboBox();  // Nach dem Hinzufügen neu laden
+        }
+    }
+
     // Buchungen in die Tabelle laden
     private void loadBookingsIntoTable() {
         List<Booking> bookings = accounting.getAllBookings();
@@ -146,44 +172,31 @@ public class AccountingGUI extends JFrame {
                     isIncome ? booking.getBetrag() : "",  // Wenn Einnahme, Betrag hier, ansonsten leer
                     !isIncome ? booking.getBetrag() : "",  // Wenn Ausgabe, Betrag hier, ansonsten leer
                     booking.getDatumZeit(),
-                    booking.getInfo()  // Zeige nur die Zusatzinfo im "Info"-Feld
+                    booking.getInfo()  // Zeige die Zusatzinfo im "Info"-Feld
             };
             tableModel.addRow(rowData);
         }
     }
 
-    // Neue Buchung erstellen
-    private void createNewBooking() {
-        String info = eingabeField.getText();
-        String zusatzInfo = zusatzInfoField.getText();
+    // Buchung speichern
+    private void saveBooking() {
+        String info = infoField.getText();
         String category = (String) categoryComboBox.getSelectedItem();
 
         Timestamp currentTimestamp = new Timestamp(System.currentTimeMillis());
-        double betrag = Double.parseDouble(eingabeField.getText());
+        double betrag = Double.parseDouble(betragField.getText());
 
-        // Beispielkategorie-ID (in der echten Anwendung würdest du die Kategorie-ID aus der Datenbank holen)
         long katId = accounting.getCategoryIdByName(category);
 
-        accounting.addBooking(currentTimestamp, zusatzInfo, betrag, katId);  // Nur die Zusatzinfo wird gespeichert
-        loadBookingsIntoTable(); // Tabelle neu laden
-    }
-
-    // Buchung aktualisieren
-    private void updateBooking() {
+        // Falls eine Zeile in der Tabelle ausgewählt ist, wird sie aktualisiert, andernfalls wird eine neue Buchung erstellt
         int selectedRow = table.getSelectedRow();
         if (selectedRow == -1) {
-            JOptionPane.showMessageDialog(this, "Bitte wählen Sie eine Buchung aus, um sie zu aktualisieren.");
-            return;
+            accounting.addBooking(currentTimestamp, info, betrag, katId);  // Nur die Zusatzinfo wird gespeichert
+        } else {
+            long id = (Long) tableModel.getValueAt(selectedRow, 0);
+            accounting.updateBooking(id, currentTimestamp, info, betrag, katId);  // Buchung aktualisieren
         }
-
-        long id = (Long) tableModel.getValueAt(selectedRow, 0);
-        String info = eingabeField.getText();
-        String zusatzInfo = zusatzInfoField.getText();
-        Timestamp currentTimestamp = new Timestamp(System.currentTimeMillis());
-        double betrag = Double.parseDouble(eingabeField.getText());
-
-        accounting.updateBooking(id, currentTimestamp, zusatzInfo, betrag, 1);  // Nur die Zusatzinfo wird gespeichert
-        loadBookingsIntoTable();
+        loadBookingsIntoTable(); // Tabelle neu laden
     }
 
     // Buchung löschen
@@ -197,6 +210,30 @@ public class AccountingGUI extends JFrame {
         long id = (Long) tableModel.getValueAt(selectedRow, 0);
         accounting.deleteBooking(id);
         loadBookingsIntoTable();
+    }
+
+    // Buchung laden
+    private void loadSelectedBooking() {
+        int selectedRow = table.getSelectedRow();
+        if (selectedRow == -1) {
+            JOptionPane.showMessageDialog(this, "Bitte wählen Sie eine Buchung aus, um sie zu laden.");
+            return;
+        }
+
+        long id = (Long) tableModel.getValueAt(selectedRow, 0);
+        Booking booking = accounting.getBookingById(id);  // Holen Sie die Buchung basierend auf der ID
+
+        betragField.setText(String.valueOf(booking.getBetrag()));
+        infoField.setText(booking.getInfo());
+        Category category = accounting.getCategoryById(booking.getKatId());
+        categoryComboBox.setSelectedItem(category.getName());
+    }
+
+    // Eingabefelder leeren
+    private void clearInputs() {
+        betragField.setText("");
+        infoField.setText("");
+        categoryComboBox.setSelectedIndex(-1);  // Keine Auswahl
     }
 
     // Filter anwenden
