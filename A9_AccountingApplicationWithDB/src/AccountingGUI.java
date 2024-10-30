@@ -28,7 +28,7 @@ public class AccountingGUI extends JFrame {
     private void initComponents() {
         setTitle("Einnahmen Ausgaben Rechner");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(800, 600);
+        setSize(1000, 600);  // Breitere GUI
         setLayout(new BorderLayout());
 
         // Tabelle
@@ -40,7 +40,8 @@ public class AccountingGUI extends JFrame {
 
         // Eingabebereich rechts
         JPanel inputPanel = new JPanel();
-        inputPanel.setLayout(new GridLayout(10, 2));
+        inputPanel.setLayout(new GridLayout(10, 2, 10, 10));  // Abstand zwischen den Komponenten erhöht
+        inputPanel.setPreferredSize(new Dimension(300, 0));  // Festgelegte Breite des rechten Panels
 
         inputPanel.add(new JLabel("Eingabe:"));
         eingabeField = new JTextField();
