@@ -35,6 +35,7 @@ public class AccountingGUI extends JFrame {
         String[] columnNames = {"ID", "Bezeichnung", "Einnahmen", "Ausgaben", "Datum", "Info"};
         tableModel = new DefaultTableModel(columnNames, 0);
         table = new JTable(tableModel);
+        table.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);  // Mehrfachauswahl erlauben
         JScrollPane tableScrollPane = new JScrollPane(table);
         add(tableScrollPane, BorderLayout.CENTER);
 
@@ -124,7 +125,7 @@ public class AccountingGUI extends JFrame {
         deleteButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                deleteBooking();
+                deleteSelectedBookings();  // Mehrere Zeilen löschen
             }
         });
 
@@ -253,17 +254,22 @@ public class AccountingGUI extends JFrame {
         clearInputs();  // Felder leeren nach dem Speichern
     }
 
-    // Buchung löschen
-    private void deleteBooking() {
-        int selectedRow = table.getSelectedRow();
-        if (selectedRow == -1) {
-            JOptionPane.showMessageDialog(this, "Bitte wählen Sie eine Buchung aus, um sie zu löschen.");
+    // Mehrere Buchungen löschen
+    private void deleteSelectedBookings() {
+        int[] selectedRows = table.getSelectedRows();
+        if (selectedRows.length == 0) {
+            JOptionPane.showMessageDialog(this, "Bitte wählen Sie mindestens eine Buchung aus, um sie zu löschen.");
             return;
         }
 
-        long id = (Long) tableModel.getValueAt(selectedRow, 0);
-        accounting.deleteBooking(id);
-        loadBookingsIntoTable();
+        int confirmation = JOptionPane.showConfirmDialog(this, "Sind Sie sicher, dass Sie die ausgewählten Buchungen löschen möchten?", "Löschen bestätigen", JOptionPane.YES_NO_OPTION);
+        if (confirmation == JOptionPane.YES_OPTION) {
+            for (int row : selectedRows) {
+                long id = (Long) tableModel.getValueAt(row, 0);
+                accounting.deleteBooking(id);
+            }
+            loadBookingsIntoTable();
+        }
     }
 
     // Buchung laden
