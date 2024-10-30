@@ -26,7 +26,7 @@ public class Database {
         }
     }
 
-    // Methode, um eine neue Kategorie hinzuzufügen
+    // Methode, um eine neue Kategorie hinzuzufügen (NEU)
     public void addCategory(Category category) {
         String query = "INSERT INTO categories (Name, Kurz, Ein_Aus) VALUES (?, ?, ?)";
         try (PreparedStatement pstmt = conn.prepareStatement(query)) {
@@ -62,7 +62,7 @@ public class Database {
         return categories;
     }
 
-    // NEU: Kategorie nach ID abrufen
+    // Methode, um eine Kategorie nach ID abzurufen
     public Category getCategoryById(long id) {
         String query = "SELECT * FROM categories WHERE ID = ?";
         try (PreparedStatement pstmt = conn.prepareStatement(query)) {
@@ -82,7 +82,7 @@ public class Database {
         return null;
     }
 
-    // NEU: Kategorie-ID anhand des Namens abrufen
+    // Methode, um die Kategorie-ID anhand des Namens abzurufen
     public long getCategoryIdByName(String name) {
         String query = "SELECT ID FROM categories WHERE Name = ?";
         try (PreparedStatement pstmt = conn.prepareStatement(query)) {
@@ -133,6 +133,27 @@ public class Database {
             e.printStackTrace();
         }
         return bookings;
+    }
+
+    // Methode, um eine Buchung nach ID abzurufen (NEU)
+    public Booking getBookingById(long id) {
+        String query = "SELECT * FROM booking WHERE ID = ?";
+        try (PreparedStatement pstmt = conn.prepareStatement(query)) {
+            pstmt.setLong(1, id);
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                return new Booking(
+                        rs.getLong("ID"),
+                        rs.getTimestamp("Datum_Zeit"),
+                        rs.getString("Info"),
+                        rs.getDouble("Betrag"),
+                        rs.getLong("KatID")
+                );
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     // Methode, um eine Buchung zu aktualisieren
