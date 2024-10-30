@@ -215,23 +215,37 @@ public class AccountingGUI extends JFrame {
 
     // Buchung speichern
     private void saveBooking() {
+        // Überprüfen, ob eine Kategorie ausgewählt wurde
+        if (categoryComboBox.getSelectedIndex() == -1) {
+            JOptionPane.showMessageDialog(this, "Bitte wählen Sie eine Kategorie aus.");
+            return;
+        }
+
         String info = infoField.getText();
         String category = (String) categoryComboBox.getSelectedItem();
 
-        Timestamp currentTimestamp = new Timestamp(System.currentTimeMillis());
-        double betrag = Double.parseDouble(betragField.getText());
+        // Betrag formatieren, damit sowohl "," als auch "." erlaubt sind
+        String betragText = betragField.getText().replace(",", ".");
+        double betrag;
+        try {
+            betrag = Double.parseDouble(betragText);
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "Ungültiger Betrag.");
+            return;
+        }
 
         long katId = accounting.getCategoryIdByName(category);
 
         // Falls eine Zeile in der Tabelle ausgewählt ist, wird sie aktualisiert, andernfalls wird eine neue Buchung erstellt
         int selectedRow = table.getSelectedRow();
         if (selectedRow == -1) {
-            accounting.addBooking(currentTimestamp, info, betrag, katId);  // Nur die Zusatzinfo wird gespeichert
+            accounting.addBooking(new Timestamp(System.currentTimeMillis()), info, betrag, katId);  // Neue Buchung
         } else {
             long id = (Long) tableModel.getValueAt(selectedRow, 0);
-            accounting.updateBooking(id, currentTimestamp, info, betrag, katId);  // Buchung aktualisieren
+            accounting.updateBooking(id, new Timestamp(System.currentTimeMillis()), info, betrag, katId);  // Buchung aktualisieren
         }
         loadBookingsIntoTable(); // Tabelle neu laden
+        clearInputs();  // Felder leeren nach dem Speichern
     }
 
     // Buchung löschen
