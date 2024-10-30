@@ -239,10 +239,15 @@ public class AccountingGUI extends JFrame {
         // Falls eine Zeile in der Tabelle ausgewählt ist, wird sie aktualisiert, andernfalls wird eine neue Buchung erstellt
         int selectedRow = table.getSelectedRow();
         if (selectedRow == -1) {
-            accounting.addBooking(new Timestamp(System.currentTimeMillis()), info, betrag, katId);  // Neue Buchung
+            // Neue Buchung mit aktuellem Zeitstempel erstellen
+            accounting.addBooking(new Timestamp(System.currentTimeMillis()), info, betrag, katId);
         } else {
+            // Bestehende Buchung aktualisieren
             long id = (Long) tableModel.getValueAt(selectedRow, 0);
-            accounting.updateBooking(id, new Timestamp(System.currentTimeMillis()), info, betrag, katId);  // Buchung aktualisieren
+            Booking existingBooking = accounting.getBookingById(id);  // Hole die existierende Buchung
+
+            // Aktualisiere Buchung mit dem vorhandenen Datum
+            accounting.updateBooking(id, existingBooking.getDatumZeit(), info, betrag, katId);
         }
         loadBookingsIntoTable(); // Tabelle neu laden
         clearInputs();  // Felder leeren nach dem Speichern
