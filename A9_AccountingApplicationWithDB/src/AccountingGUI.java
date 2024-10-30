@@ -146,7 +146,7 @@ public class AccountingGUI extends JFrame {
                     isIncome ? booking.getBetrag() : "",  // Wenn Einnahme, Betrag hier, ansonsten leer
                     !isIncome ? booking.getBetrag() : "",  // Wenn Ausgabe, Betrag hier, ansonsten leer
                     booking.getDatumZeit(),
-                    booking.getInfo()  // Zeige die Zusatzinfo im "Info"-Feld
+                    booking.getInfo()  // Zeige nur die Zusatzinfo im "Info"-Feld
             };
             tableModel.addRow(rowData);
         }
@@ -164,7 +164,7 @@ public class AccountingGUI extends JFrame {
         // Beispielkategorie-ID (in der echten Anwendung würdest du die Kategorie-ID aus der Datenbank holen)
         long katId = accounting.getCategoryIdByName(category);
 
-        accounting.addBooking(currentTimestamp, info + " - " + zusatzInfo, betrag, katId);
+        accounting.addBooking(currentTimestamp, zusatzInfo, betrag, katId);  // Nur die Zusatzinfo wird gespeichert
         loadBookingsIntoTable(); // Tabelle neu laden
     }
 
@@ -182,7 +182,7 @@ public class AccountingGUI extends JFrame {
         Timestamp currentTimestamp = new Timestamp(System.currentTimeMillis());
         double betrag = Double.parseDouble(eingabeField.getText());
 
-        accounting.updateBooking(id, currentTimestamp, info + " - " + zusatzInfo, betrag, 1);
+        accounting.updateBooking(id, currentTimestamp, zusatzInfo, betrag, 1);  // Nur die Zusatzinfo wird gespeichert
         loadBookingsIntoTable();
     }
 
