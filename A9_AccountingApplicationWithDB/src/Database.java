@@ -3,25 +3,25 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Database {
-    private String dbUrl;
-    private String user;
-    private String pass;
     private Connection conn;
 
-    // Konstruktor, um die Verbindungsdaten zu übergeben
+    // Konstruktor, der eine Verbindung zur Datenbank herstellt
     public Database(String dbUrl, String user, String pass) {
-        this.dbUrl = dbUrl;
-        this.user = user;
-        this.pass = pass;
-        connect();
+        connect(dbUrl, user, pass);
     }
 
     // Methode, um die Verbindung zur Datenbank herzustellen
-    private void connect() {
+    private void connect(String dbUrl, String user, String pass) {
         try {
+            // MySQL JDBC-Treiber laden
+            Class.forName("com.mysql.cj.jdbc.Driver");
             conn = DriverManager.getConnection(dbUrl, user, pass);
             System.out.println("Verbindung zur Datenbank erfolgreich!");
+        } catch (ClassNotFoundException e) {
+            System.out.println("MySQL-Treiber nicht gefunden.");
+            e.printStackTrace();
         } catch (SQLException e) {
+            System.out.println("Datenbankverbindung fehlgeschlagen.");
             e.printStackTrace();
         }
     }
@@ -40,7 +40,7 @@ public class Database {
         }
     }
 
-    // Methode, um alle Kategorien anzuzeigen
+    // Methode, um alle Kategorien abzurufen
     public List<Category> getAllCategories() {
         List<Category> categories = new ArrayList<>();
         String query = "SELECT * FROM categories";
@@ -62,6 +62,41 @@ public class Database {
         return categories;
     }
 
+    // NEU: Kategorie nach ID abrufen
+    public Category getCategoryById(long id) {
+        String query = "SELECT * FROM categories WHERE ID = ?";
+        try (PreparedStatement pstmt = conn.prepareStatement(query)) {
+            pstmt.setLong(1, id);
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                return new Category(
+                        rs.getLong("ID"),
+                        rs.getString("Name"),
+                        rs.getString("Kurz"),
+                        rs.getBoolean("Ein_Aus")
+                );
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    // NEU: Kategorie-ID anhand des Namens abrufen
+    public long getCategoryIdByName(String name) {
+        String query = "SELECT ID FROM categories WHERE Name = ?";
+        try (PreparedStatement pstmt = conn.prepareStatement(query)) {
+            pstmt.setString(1, name);
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                return rs.getLong("ID");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return -1;  // -1 als Fehlerwert
+    }
+
     // Methode, um eine neue Buchung hinzuzufügen
     public void addBooking(Booking booking) {
         String query = "INSERT INTO booking (Datum_Zeit, Info, Betrag, KatID) VALUES (?, ?, ?, ?)";
@@ -77,7 +112,7 @@ public class Database {
         }
     }
 
-    // Methode, um alle Buchungen anzuzeigen
+    // Methode, um alle Buchungen abzurufen
     public List<Booking> getAllBookings() {
         List<Booking> bookings = new ArrayList<>();
         String query = "SELECT * FROM booking";
