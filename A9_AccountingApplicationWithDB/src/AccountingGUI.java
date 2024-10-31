@@ -41,12 +41,20 @@ public class AccountingGUI extends JFrame {
 
         // Tabelle
         String[] columnNames = {"ID", "Bezeichnung", "Einnahmen", "Ausgaben", "Datum", "Info"};
-        tableModel = new DefaultTableModel(columnNames, 0);
+
+        // Nicht editierbares Modell
+        tableModel = new DefaultTableModel(columnNames, 0) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;  // Alle Zellen als nicht editierbar setzen
+            }
+        };
+
         table = new JTable(tableModel);
         table.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);  // Mehrfachauswahl erlauben
 
-        // Tabelle mit Scrollpane (mit Margin)
-        JScrollPane tableScrollPane = new JScrollPane(table);
+        // Tabelle mit Scrollpane (nur vertikale Scrollbar immer anzeigen)
+        JScrollPane tableScrollPane = new JScrollPane(table, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         tableScrollPane.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));  // Margin: 10px um die Tabelle
         add(tableScrollPane, BorderLayout.CENTER);
 
