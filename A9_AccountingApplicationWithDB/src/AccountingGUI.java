@@ -361,20 +361,33 @@ public class AccountingGUI extends JFrame {
 
         long katId = accounting.getCategoryIdByName(category);
 
-        // Falls eine Zeile in der Tabelle ausgewählt ist, wird sie aktualisiert, andernfalls wird eine neue Buchung erstellt
+        // Prüfen, ob eine Zeile in der Tabelle ausgewählt ist
         int selectedRow = table.getSelectedRow();
         if (selectedRow == -1) {
             // Neue Buchung mit aktuellem Zeitstempel erstellen
             accounting.addBooking(new Timestamp(System.currentTimeMillis()), info, betrag, katId);
         } else {
-            // Bestehende Buchung aktualisieren
-            long id = (Long) tableModel.getValueAt(selectedRow, 0);
-            Booking existingBooking = accounting.getBookingById(id);  // Hole die existierende Buchung
+            // Bestätigungsdialog anzeigen, um Überschreiben zu bestätigen
+            int confirmation = JOptionPane.showConfirmDialog(
+                    this,
+                    "Möchten Sie den ausgewählten Datensatz wirklich überschreiben?",
+                    "Bestätigung erforderlich",
+                    JOptionPane.YES_NO_OPTION
+            );
 
-            // Aktualisiere Buchung mit dem vorhandenen Datum
-            accounting.updateBooking(id, existingBooking.getDatumZeit(), info, betrag, katId);
+            if (confirmation == JOptionPane.YES_OPTION) {
+                // Bestehende Buchung aktualisieren
+                long id = (Long) tableModel.getValueAt(selectedRow, 0);
+                Booking existingBooking = accounting.getBookingById(id);  // Hole die existierende Buchung
+
+                // Aktualisiere Buchung mit dem vorhandenen Datum
+                accounting.updateBooking(id, existingBooking.getDatumZeit(), info, betrag, katId);
+            } else {
+                return;  // Abbruch, wenn Benutzer nicht bestätigen möchte
+            }
         }
-        loadBookingsIntoTable(); // Tabelle neu laden
+
+        loadBookingsIntoTable();  // Tabelle neu laden
         clearInputs();  // Felder leeren nach dem Speichern
     }
 
