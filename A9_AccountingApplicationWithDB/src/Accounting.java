@@ -52,6 +52,10 @@ public class Accounting {
         db.updateBooking(booking);
     }
 
+    public List<Booking> searchBookings(String dateFrom, String dateTo, String category, String einAus, String infoKeyword) {
+        return db.searchBookings(dateFrom, dateTo, category, einAus, infoKeyword);
+    }
+
     // Methode, um eine Buchung zu löschen
     public void deleteBooking(long id) {
         db.deleteBooking(id);

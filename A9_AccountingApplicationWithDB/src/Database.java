@@ -172,6 +172,58 @@ public class Database {
         }
     }
 
+    public List<Booking> searchBookings(String dateFrom, String dateTo, String category, String einAus, String infoKeyword) {
+        List<Booking> bookings = new ArrayList<>();
+        try {
+            StringBuilder query = new StringBuilder("SELECT b.* FROM booking b INNER JOIN categories c ON b.KatID = c.ID WHERE 1=1");
+
+            // Datum von
+            if (!dateFrom.isEmpty()) {
+                query.append(" AND b.`Datum_Zeit` >= '").append(dateFrom).append("'");
+            }
+
+            // Datum bis
+            if (!dateTo.isEmpty()) {
+                query.append(" AND b.`Datum_Zeit` <= '").append(dateTo).append("'");
+            }
+
+            // Kategorie
+            if (!category.isEmpty()) {
+                long katId = getCategoryIdByName(category);  // Hole die Kategorie-ID
+                query.append(" AND b.KatID = ").append(katId);
+            }
+
+            // Einnahme oder Ausgabe
+            if (!einAus.isEmpty()) {
+                boolean isEinnahme = einAus.equals("Einnahme");
+                query.append(" AND c.`Ein_Aus` = ").append(isEinnahme ? 0 : 1);  // Nutze den Ein_Aus-Wert aus der Kategorie
+            }
+
+            // Info-Schlagwort
+            if (!infoKeyword.isEmpty()) {
+                query.append(" AND b.Info LIKE '%").append(infoKeyword).append("%'");
+            }
+
+            // Führe die Abfrage aus
+            Statement stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery(query.toString());
+
+            // Ergebnisse in Booking-Objekte umwandeln
+            while (rs.next()) {
+                long id = rs.getLong("ID");
+                Timestamp datumZeit = rs.getTimestamp("Datum_Zeit");
+                String info = rs.getString("Info");
+                double betrag = rs.getDouble("Betrag");
+                long katId = rs.getLong("KatID");
+
+                bookings.add(new Booking(id, datumZeit, info, betrag, katId));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return bookings;
+    }
+
     // Methode, um eine Buchung zu löschen
     public void deleteBooking(long id) {
         String query = "DELETE FROM booking WHERE ID = ?";

@@ -221,6 +221,7 @@ public class AccountingGUI extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 clearSearchFields();  // Methode zum Zurücksetzen der Felder
+                searchBookings();
             }
         });
     }
@@ -308,23 +309,32 @@ public class AccountingGUI extends JFrame {
 
     // Buchungen anhand der Suchkriterien filtern
     private void searchBookings() {
-        // Beispiel: Suche nach Kriterien aus den Suchfeldern
-        String dateFrom = searchDateFromField.getText();
-        String dateTo = searchDateToField.getText();
-        String selectedCategory = (String) searchCategoryComboBox.getSelectedItem();
-        String selectedEinAus = (String) searchEinAusComboBox.getSelectedItem();
-        String infoKeyword = searchInfoField.getText();
+        // Suchkriterien abrufen
+        String dateFrom = searchDateFromField.getText().equals("Datum von") ? "" : searchDateFromField.getText();
+        String dateTo = searchDateToField.getText().equals("Datum bis") ? "" : searchDateToField.getText();
+        String selectedCategory = searchCategoryComboBox.getSelectedItem().toString().equals("Alle Kategorien") ? "" : searchCategoryComboBox.getSelectedItem().toString();
+        String selectedEinAus = searchEinAusComboBox.getSelectedItem().toString().equals("Ein/Ausgabe") ? "" : searchEinAusComboBox.getSelectedItem().toString();
+        String infoKeyword = searchInfoField.getText().equals("Info") ? "" : searchInfoField.getText();
 
-        // Hier könntest du deine eigene Filterlogik hinzufügen, die auf den eingegebenen Werten basiert
-        System.out.println("Suchkriterien:");
-        System.out.println("Datum von: " + dateFrom);
-        System.out.println("Datum bis: " + dateTo);
-        System.out.println("Kategorie: " + selectedCategory);
-        System.out.println("Ein/Ausgabe: " + selectedEinAus);
-        System.out.println("Info-Schlagwort: " + infoKeyword);
+        // Filter-Logik implementieren
+        List<Booking> filteredBookings = accounting.searchBookings(dateFrom, dateTo, selectedCategory, selectedEinAus, infoKeyword);
 
-        // Nach Anwendung der Filter kann die Tabelle neu geladen werden
-        loadBookingsIntoTable();  // Eventuell muss diese Methode angepasst werden, um gefilterte Ergebnisse zu laden
+        // Tabelle leeren und gefilterte Buchungen hinzufügen
+        tableModel.setRowCount(0);
+        for (Booking booking : filteredBookings) {
+            Category category = accounting.getCategoryById(booking.getKatId());
+            boolean isIncome = !category.isEinAus();  // Annahme: 'Ein_Aus = false' für Einnahmen, 'true' für Ausgaben
+
+            Object[] rowData = {
+                    booking.getId(),
+                    category.getName(),
+                    isIncome ? booking.getBetrag() : "",
+                    !isIncome ? booking.getBetrag() : "",
+                    booking.getDatumZeit(),
+                    booking.getInfo()
+            };
+            tableModel.addRow(rowData);
+        }
     }
 
     // Buchung speichern
