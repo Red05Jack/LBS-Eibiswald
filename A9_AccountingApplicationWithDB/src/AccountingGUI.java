@@ -5,9 +5,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.Timestamp;
 import java.util.List;
+import java.util.Objects;
 
 public class AccountingGUI extends JFrame {
-    private Accounting accounting;
+    private final Accounting accounting;
     private JTable table;
     private DefaultTableModel tableModel;
 
@@ -261,7 +262,7 @@ public class AccountingGUI extends JFrame {
         if (result == JOptionPane.OK_OPTION) {
             String name = nameField.getText();
             String kurz = kurzField.getText();
-            boolean isEinnahme = einAusComboBox.getSelectedItem().equals("Einnahme");
+            boolean isEinnahme = Objects.equals(einAusComboBox.getSelectedItem(), "Einnahme");
 
             if (name.length() <= 100 && kurz.length() <= 5) {
                 accounting.addCategory(name, kurz, !isEinnahme);  // "isEinnahme = false" bedeutet Ausgabe
@@ -312,8 +313,8 @@ public class AccountingGUI extends JFrame {
         // Suchkriterien abrufen
         String dateFrom = searchDateFromField.getText().equals("Datum von") ? "" : searchDateFromField.getText();
         String dateTo = searchDateToField.getText().equals("Datum bis") ? "" : searchDateToField.getText();
-        String selectedCategory = searchCategoryComboBox.getSelectedItem().toString().equals("Alle Kategorien") ? "" : searchCategoryComboBox.getSelectedItem().toString();
-        String selectedEinAus = searchEinAusComboBox.getSelectedItem().toString().equals("Ein/Ausgabe") ? "" : searchEinAusComboBox.getSelectedItem().toString();
+        String selectedCategory = Objects.requireNonNull(searchCategoryComboBox.getSelectedItem()).toString().equals("Alle Kategorien") ? "" : searchCategoryComboBox.getSelectedItem().toString();
+        String selectedEinAus = Objects.requireNonNull(searchEinAusComboBox.getSelectedItem()).toString().equals("Ein/Ausgabe") ? "" : searchEinAusComboBox.getSelectedItem().toString();
         String infoKeyword = searchInfoField.getText().equals("Info") ? "" : searchInfoField.getText();
 
         // Filter-Logik implementieren
@@ -425,9 +426,6 @@ public class AccountingGUI extends JFrame {
         String from = filterFrom.getText();
         String to = filterTo.getText();
 
-        // Filter-Logik implementieren
-        // Für eine einfache Implementierung könnten Sie die Datenbankabfrage direkt anpassen, um gefilterte Daten zu erhalten
-
         loadBookingsIntoTable(); // Nach Anwendung der Filter neu laden
     }
 
@@ -435,6 +433,5 @@ public class AccountingGUI extends JFrame {
     private void resetFilters() {
         filterFrom.setText("");
         filterTo.setText("");
-        loadBookingsIntoTable(); // Tabelle ohne Filter neu laden
     }
 }

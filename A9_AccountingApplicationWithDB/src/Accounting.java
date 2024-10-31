@@ -2,7 +2,7 @@ import java.sql.Timestamp;
 import java.util.List;
 
 public class Accounting {
-    private Database db;
+    private final Database db;
 
     // Konstruktor, der eine Verbindung zur Datenbank aufbaut
     public Accounting(String dbUrl, String user, String pass) {
