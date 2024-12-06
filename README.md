@@ -1,4 +1,3 @@
-# LBS-Eibiswald Projects 2aAPC 
+# LBS-Eibiswald Projects
 
 Author: Wurzrainer Jakob <br>
-LBS Eibiswald | 2024/45 | 2aAPC
